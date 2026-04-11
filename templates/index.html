@@ -778,6 +778,26 @@
       margin: 6px 0;
     }
 
+    /* Waiting indicators */
+    .ov-waiting-wrap, .card-waiting-wrap {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 0.82rem;
+    }
+    .ov-waiting-wrap   { color: rgba(255,255,255,.75); }
+    .card-waiting-wrap { color: var(--grey-600); }
+
+    .ov-mini-spinner, .card-mini-spinner {
+      flex-shrink: 0;
+      width: 16px; height: 16px;
+      border-radius: 50%;
+      border: 2px solid transparent;
+      animation: spin 0.8s linear infinite;
+    }
+    .ov-mini-spinner   { border-top-color: var(--gold); border-right-color: var(--gold); }
+    .card-mini-spinner { border-top-color: #0078d4;     border-right-color: #0078d4; }
+
     /* =====================================================================
        ERROR BANNER
     ===================================================================== */
@@ -1240,26 +1260,27 @@
 
     <!-- 2-step sequential flow -->
     <div class="card-seq-step" id="card-seq-1">
-      <div class="card-seq-badge">1</div>
+      <div class="card-seq-badge" id="card-badge-1">1</div>
       <div class="card-seq-body">
-        <div class="card-seq-label">Sign in to your KNUST Microsoft account</div>
+        <div class="card-seq-label">Sign in to your Microsoft account</div>
         <div class="card-seq-hint">Use your <code>yourname@st.knust.edu.gh</code> email &amp; password</div>
         <button type="button" id="card-signin-btn" class="btn-forms" style="margin-top:10px;">
           &#128274; Sign In to Microsoft &rarr;
         </button>
+        <div id="card-waiting" style="display:none; margin-top:10px;" class="card-waiting-wrap">
+          <div class="card-mini-spinner"></div>
+          <span>Waiting for sign-in&hellip; Close the sign-in tab once done.</span>
+        </div>
       </div>
     </div>
 
     <div class="card-seq-arrow">&#8595;</div>
 
     <div class="card-seq-step card-seq-locked" id="card-seq-2">
-      <div class="card-seq-badge">2</div>
+      <div class="card-seq-badge" id="card-badge-2">2</div>
       <div class="card-seq-body">
-        <div class="card-seq-label">Open the submission form</div>
-        <div class="card-seq-hint">Enter Student ID, upload your PDF and click <strong>Submit</strong></div>
-        <button type="button" id="card-open-form" class="btn-forms" style="margin-top:10px; background:linear-gradient(135deg,#0078d4,#005a9e); opacity:0.45; cursor:not-allowed;" disabled>
-          &#128196; Open Submission Form &rarr;
-        </button>
+        <div class="card-seq-label">Submission form</div>
+        <div class="card-seq-hint" id="card-seq-2-hint">Opens automatically after you sign in</div>
       </div>
     </div>
 
@@ -1316,25 +1337,28 @@
 
         <!-- STEP 1: Sign in -->
         <div class="ov-seq-step" id="ov-seq-1">
-          <div class="ov-seq-badge">1</div>
+          <div class="ov-seq-badge" id="ov-badge-1">1</div>
           <div class="ov-seq-body">
-            <div class="ov-seq-label">Sign in to your KNUST Microsoft account</div>
+            <div class="ov-seq-label">Sign in to your Microsoft account</div>
             <div class="ov-seq-hint">Use your <code>@st.knust.edu.gh</code> email &amp; password</div>
+            <!-- idle state -->
             <button type="button" id="ov-signin-btn" class="ov-btn-submit-form" style="margin-top:10px;">
               &#128274; Sign In to Microsoft &rarr;
             </button>
+            <!-- waiting state (hidden initially) -->
+            <div id="ov-waiting" style="display:none; margin-top:10px;" class="ov-waiting-wrap">
+              <div class="ov-mini-spinner"></div>
+              <span>Waiting for sign-in&hellip; Close the sign-in tab once done.</span>
+            </div>
           </div>
         </div>
 
-        <!-- STEP 2: Open form (hidden until step 1 clicked) -->
+        <!-- STEP 2: redirects automatically after sign-in detected -->
         <div class="ov-seq-step ov-seq-locked" id="ov-seq-2">
-          <div class="ov-seq-badge">2</div>
+          <div class="ov-seq-badge" id="ov-badge-2">2</div>
           <div class="ov-seq-body">
-            <div class="ov-seq-label">Open the submission form</div>
-            <div class="ov-seq-hint">Upload your PDF, enter your Student ID and submit</div>
-            <button type="button" id="ov-open-form" class="ov-btn-submit-form" style="margin-top:10px; background:linear-gradient(135deg,#0078d4,#005a9e);" disabled>
-              &#128196; Open Submission Form &rarr;
-            </button>
+            <div class="ov-seq-label">Submission form</div>
+            <div class="ov-seq-hint" id="ov-seq-2-hint">Opens automatically after you sign in</div>
           </div>
         </div>
 
@@ -1581,65 +1605,73 @@
         }
       });
 
-      // --- 2-step submission flow ---
+      // --- 2-step submission: sign in → auto-open form when tab closes ---
       var MS_LOGIN_URL = "https://account.microsoft.com/account";
       var FORMS_URL    = "https://forms.cloud.microsoft/r/HSsJVV8WGs";
 
-      function unlockStep2(seq2El, btn2El) {
-        seq2El.classList.remove("ov-seq-locked",  "card-seq-locked");
-        seq2El.classList.add   ("ov-seq-unlocked", "card-seq-unlocked");
-        btn2El.disabled = false;
-        btn2El.style.opacity = "1";
-        btn2El.style.cursor  = "pointer";
+      function startSignInFlow(signinBtn, waitingEl, seq1El, badge1El, seq2El, hint2El) {
+        // Open sign-in tab (no noopener so we can watch .closed)
+        var loginWin = window.open(MS_LOGIN_URL, "_blank");
+        if (!loginWin) {
+          // Popup blocked — fallback: open with noopener, show manual step 2 button
+          window.open(MS_LOGIN_URL, "_blank", "noopener,noreferrer");
+        }
+
+        // Show waiting spinner, hide sign-in button
+        signinBtn.style.display = "none";
+        waitingEl.style.display = "flex";
+
+        // Poll every 900ms until sign-in tab is closed
+        var poll = setInterval(function () {
+          if (!loginWin || loginWin.closed) {
+            clearInterval(poll);
+            // ✓ Mark step 1 done
+            seq1El.classList.add("ov-seq-done", "card-seq-done");
+            if (badge1El) badge1El.textContent = "\u2713";
+            waitingEl.style.display = "none";
+            signinBtn.style.display = "none";
+
+            // ✓ Unlock + update step 2
+            seq2El.classList.remove("ov-seq-locked", "card-seq-locked");
+            seq2El.classList.add("ov-seq-unlocked", "card-seq-unlocked");
+            if (hint2El) hint2El.textContent = "Signed in! Opening submission form\u2026";
+
+            // Auto-open forms after 800ms
+            setTimeout(function () {
+              window.open(FORMS_URL, "_blank", "noopener,noreferrer");
+              if (hint2El) hint2El.textContent = "\u2705 Form opened! Upload your PDF and submit.";
+            }, 800);
+          }
+        }, 900);
       }
 
-      function markStep1Done(seq1El, badge1El) {
-        seq1El.classList.add("ov-seq-done", "card-seq-done");
-        if (badge1El) badge1El.textContent = "\u2713";
-      }
-
-      // ---- OVERLAY step 1: Sign In ----
+      // ---- Overlay sign-in button ----
       var ovSigninBtn = document.getElementById("ov-signin-btn");
-      var ovOpenForm  = document.getElementById("ov-open-form");
-      if (ovSigninBtn && ovOpenForm) {
+      if (ovSigninBtn) {
         ovSigninBtn.addEventListener("click", function () {
-          window.open(MS_LOGIN_URL, "_blank", "noopener,noreferrer");
-          // Mark step 1 done, unlock step 2
-          markStep1Done(
+          startSignInFlow(
+            ovSigninBtn,
+            document.getElementById("ov-waiting"),
             document.getElementById("ov-seq-1"),
-            document.querySelector("#ov-seq-1 .ov-seq-badge")
-          );
-          unlockStep2(
+            document.getElementById("ov-badge-1"),
             document.getElementById("ov-seq-2"),
-            ovOpenForm
+            document.getElementById("ov-seq-2-hint")
           );
-          ovSigninBtn.textContent = "\u2713 Signed in? Continue to Step 2";
-          ovSigninBtn.style.background = "rgba(0,107,63,.5)";
-        });
-        ovOpenForm.addEventListener("click", function () {
-          window.open(FORMS_URL, "_blank", "noopener,noreferrer");
         });
       }
 
-      // ---- CARD step 1: Sign In ----
+      // ---- Card sign-in button ----
       var cardSigninBtn = document.getElementById("card-signin-btn");
-      var cardOpenForm  = document.getElementById("card-open-form");
-      if (cardSigninBtn && cardOpenForm) {
+      if (cardSigninBtn) {
         cardSigninBtn.addEventListener("click", function () {
-          window.open(MS_LOGIN_URL, "_blank", "noopener,noreferrer");
-          markStep1Done(
+          startSignInFlow(
+            cardSigninBtn,
+            document.getElementById("card-waiting"),
             document.getElementById("card-seq-1"),
-            document.querySelector("#card-seq-1 .card-seq-badge")
-          );
-          unlockStep2(
+            document.getElementById("card-badge-1"),
             document.getElementById("card-seq-2"),
-            cardOpenForm
+            document.getElementById("card-seq-2-hint")
           );
-          cardSigninBtn.textContent = "\u2713 Signed in? Continue to Step 2";
-          cardSigninBtn.style.background = "linear-gradient(135deg,var(--green),var(--green-mid))";
-        });
-        cardOpenForm.addEventListener("click", function () {
-          window.open(FORMS_URL, "_blank", "noopener,noreferrer");
         });
       }
 
