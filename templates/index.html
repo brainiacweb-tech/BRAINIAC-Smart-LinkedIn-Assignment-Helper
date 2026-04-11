@@ -667,6 +667,117 @@
       color: #005a9e;
     }
 
+    /* --- Sequential 2-step flow inside overlay --- */
+    .ov-seq-step {
+      display: flex;
+      gap: 12px;
+      align-items: flex-start;
+      background: rgba(255,255,255,.07);
+      border: 1px solid rgba(255,255,255,.15);
+      border-radius: 12px;
+      padding: 14px;
+      margin-bottom: 10px;
+      transition: background 0.3s, border-color 0.3s;
+    }
+    .ov-seq-step.ov-seq-locked {
+      opacity: 0.45;
+      pointer-events: none;
+    }
+    .ov-seq-step.ov-seq-unlocked {
+      opacity: 1;
+      pointer-events: auto;
+      background: rgba(0,120,212,.2);
+      border-color: rgba(0,120,212,.5);
+    }
+    .ov-seq-step.ov-seq-done {
+      background: rgba(0,107,63,.3);
+      border-color: rgba(255,199,44,.4);
+    }
+    .ov-seq-badge {
+      flex-shrink: 0;
+      width: 28px; height: 28px;
+      border-radius: 50%;
+      background: rgba(255,199,44,.2);
+      border: 1.5px solid rgba(255,199,44,.5);
+      color: var(--gold);
+      font-size: 0.85rem;
+      font-weight: 900;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    .ov-seq-done .ov-seq-badge {
+      background: var(--gold);
+      color: var(--green-dark);
+      content: "✓";
+    }
+    .ov-seq-body { flex: 1; }
+    .ov-seq-label { font-size: 0.9rem; font-weight: 700; color: #fff; margin-bottom: 3px; }
+    .ov-seq-hint  { font-size: 0.78rem; color: rgba(255,255,255,.65); }
+    .ov-seq-hint code {
+      background: rgba(255,255,255,.12);
+      padding: 1px 5px; border-radius: 3px;
+      color: var(--gold); font-size: 0.77rem;
+    }
+
+    /* --- Sequential 2-step flow inside Step 5 card --- */
+    .card-seq-step {
+      display: flex;
+      gap: 12px;
+      align-items: flex-start;
+      background: var(--grey-50);
+      border: 1.5px solid var(--grey-100);
+      border-radius: 12px;
+      padding: 14px;
+      transition: background 0.3s, border-color 0.3s;
+    }
+    .card-seq-step.card-seq-locked {
+      opacity: 0.4;
+      pointer-events: none;
+    }
+    .card-seq-step.card-seq-unlocked {
+      opacity: 1;
+      pointer-events: auto;
+      background: #e8f4fd;
+      border-color: #90c8f0;
+    }
+    .card-seq-step.card-seq-done {
+      background: #e6f2ec;
+      border-color: var(--green-mid);
+    }
+    .card-seq-badge {
+      flex-shrink: 0;
+      width: 28px; height: 28px;
+      border-radius: 50%;
+      background: #e8f4fd;
+      border: 1.5px solid #90c8f0;
+      color: #0078d4;
+      font-size: 0.85rem;
+      font-weight: 900;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    .card-seq-done .card-seq-badge {
+      background: var(--green);
+      border-color: var(--green);
+      color: #fff;
+    }
+    .card-seq-body { flex: 1; }
+    .card-seq-label { font-size: 0.9rem; font-weight: 700; color: var(--text); margin-bottom: 3px; }
+    .card-seq-hint  { font-size: 0.78rem; color: var(--grey-600); }
+    .card-seq-hint code {
+      background: var(--grey-100);
+      padding: 1px 5px; border-radius: 3px;
+      color: #005a9e; font-size: 0.77rem;
+    }
+    .card-seq-arrow {
+      text-align: center;
+      font-size: 1.3rem;
+      color: var(--grey-300);
+      margin: 6px 0;
+    }
+
     /* =====================================================================
        ERROR BANNER
     ===================================================================== */
@@ -1127,24 +1238,32 @@
       <div class="label-line" style="background:linear-gradient(90deg,#cce4f7,transparent);"></div>
     </div>
 
-    <!-- numbered steps -->
-    <ol class="card-steps-list">
-      <li>Click <strong>Sign In &amp; Submit</strong> below — the Microsoft sign-in page opens in a new tab</li>
-      <li>Enter your KNUST student email: <code>yourname@st.knust.edu.gh</code></li>
-      <li>Enter your <strong>password</strong> and sign in</li>
-      <li>The <strong>BSBA161 Career Portfolio</strong> submission form opens automatically</li>
-      <li>Enter your <strong>Student ID</strong>, upload your PDF and click <strong>Submit</strong></li>
-    </ol>
+    <!-- 2-step sequential flow -->
+    <div class="card-seq-step" id="card-seq-1">
+      <div class="card-seq-badge">1</div>
+      <div class="card-seq-body">
+        <div class="card-seq-label">Sign in to your KNUST Microsoft account</div>
+        <div class="card-seq-hint">Use your <code>yourname@st.knust.edu.gh</code> email &amp; password</div>
+        <button type="button" id="card-signin-btn" class="btn-forms" style="margin-top:10px;">
+          &#128274; Sign In to Microsoft &rarr;
+        </button>
+      </div>
+    </div>
 
-    <a href="https://forms.cloud.microsoft/r/HSsJVV8WGs?prompt=select_account"
-       target="_blank"
-       rel="noopener noreferrer"
-       class="btn-forms"
-       id="card-open-form">
-      &#128274; Sign In &amp; Submit Assignment &rarr;
-    </a>
+    <div class="card-seq-arrow">&#8595;</div>
 
-    <p class="forms-note">Opens Microsoft sign-in — use your <strong>@st.knust.edu.gh</strong> email only</p>
+    <div class="card-seq-step card-seq-locked" id="card-seq-2">
+      <div class="card-seq-badge">2</div>
+      <div class="card-seq-body">
+        <div class="card-seq-label">Open the submission form</div>
+        <div class="card-seq-hint">Enter Student ID, upload your PDF and click <strong>Submit</strong></div>
+        <button type="button" id="card-open-form" class="btn-forms" style="margin-top:10px; background:linear-gradient(135deg,#0078d4,#005a9e); opacity:0.45; cursor:not-allowed;" disabled>
+          &#128196; Open Submission Form &rarr;
+        </button>
+      </div>
+    </div>
+
+    <p class="forms-note" style="margin-top:14px;">&#128274; Microsoft 365 login required &mdash; <strong>@st.knust.edu.gh</strong> only</p>
   </div>
 
   <!-- ====================================================================
@@ -1176,7 +1295,7 @@
       </div>
     </div>
 
-    <!-- STATE B: Success + submission prompt (shown after download) -->
+    <!-- STATE B: Success + 2-step submission flow -->
     <div id="overlay-success" style="display:none; width:100%; max-width:440px;">
 
       <!-- PDF downloaded confirmation -->
@@ -1190,27 +1309,36 @@
 
       <div class="ov-arrow">&#8595;</div>
 
-      <!-- Next step: submit -->
       <div class="ov-step-next">
-        <div class="ov-step-title" style="color:#fff; margin-bottom:10px;">
-          &#128196; Next &mdash; Submit to Your Lecturer
+        <div class="ov-step-title" style="color:#fff; margin-bottom:14px;">
+          &#128196; Now Submit to Your Lecturer
         </div>
 
-        <!-- numbered steps -->
-        <ol class="ov-steps-list">
-          <li>Click <strong>Sign In &amp; Submit</strong> below — Microsoft sign-in page opens</li>
-          <li>Enter your KNUST email: <code>yourname@st.knust.edu.gh</code></li>
-          <li>Enter your <strong>password</strong></li>
-          <li>The <strong>submission form</strong> opens automatically — upload your PDF &amp; submit</li>
-        </ol>
+        <!-- STEP 1: Sign in -->
+        <div class="ov-seq-step" id="ov-seq-1">
+          <div class="ov-seq-badge">1</div>
+          <div class="ov-seq-body">
+            <div class="ov-seq-label">Sign in to your KNUST Microsoft account</div>
+            <div class="ov-seq-hint">Use your <code>@st.knust.edu.gh</code> email &amp; password</div>
+            <button type="button" id="ov-signin-btn" class="ov-btn-submit-form" style="margin-top:10px;">
+              &#128274; Sign In to Microsoft &rarr;
+            </button>
+          </div>
+        </div>
 
-        <!-- Sign in button -->
-        <button type="button" id="ov-open-form" class="ov-btn-submit-form">
-          &#128274; Sign In &amp; Submit &rarr;
-        </button>
+        <!-- STEP 2: Open form (hidden until step 1 clicked) -->
+        <div class="ov-seq-step ov-seq-locked" id="ov-seq-2">
+          <div class="ov-seq-badge">2</div>
+          <div class="ov-seq-body">
+            <div class="ov-seq-label">Open the submission form</div>
+            <div class="ov-seq-hint">Upload your PDF, enter your Student ID and submit</div>
+            <button type="button" id="ov-open-form" class="ov-btn-submit-form" style="margin-top:10px; background:linear-gradient(135deg,#0078d4,#005a9e);" disabled>
+              &#128196; Open Submission Form &rarr;
+            </button>
+          </div>
+        </div>
 
-        <!-- Skip option -->
-        <button type="button" id="overlay-dismiss" class="ov-btn-skip">
+        <button type="button" id="overlay-dismiss" class="ov-btn-skip" style="margin-top:14px;">
           I'll submit later &mdash; Dismiss
         </button>
       </div>
@@ -1453,14 +1581,65 @@
         }
       });
 
-      // --- Microsoft Forms: always show sign-in page first (prompt=select_account) ---
-      var FORMS_SIGNIN_URL = "https://forms.cloud.microsoft/r/HSsJVV8WGs?prompt=select_account";
+      // --- 2-step submission flow ---
+      var MS_LOGIN_URL = "https://login.microsoftonline.com/st.knust.edu.gh";
+      var FORMS_URL    = "https://forms.cloud.microsoft/r/HSsJVV8WGs";
 
-      // Overlay "Sign In & Submit" button
-      var ovOpenForm = document.getElementById("ov-open-form");
-      if (ovOpenForm) {
+      function unlockStep2(seq2El, btn2El) {
+        seq2El.classList.remove("ov-seq-locked",  "card-seq-locked");
+        seq2El.classList.add   ("ov-seq-unlocked", "card-seq-unlocked");
+        btn2El.disabled = false;
+        btn2El.style.opacity = "1";
+        btn2El.style.cursor  = "pointer";
+      }
+
+      function markStep1Done(seq1El, badge1El) {
+        seq1El.classList.add("ov-seq-done", "card-seq-done");
+        if (badge1El) badge1El.textContent = "\u2713";
+      }
+
+      // ---- OVERLAY step 1: Sign In ----
+      var ovSigninBtn = document.getElementById("ov-signin-btn");
+      var ovOpenForm  = document.getElementById("ov-open-form");
+      if (ovSigninBtn && ovOpenForm) {
+        ovSigninBtn.addEventListener("click", function () {
+          window.open(MS_LOGIN_URL, "_blank", "noopener,noreferrer");
+          // Mark step 1 done, unlock step 2
+          markStep1Done(
+            document.getElementById("ov-seq-1"),
+            document.querySelector("#ov-seq-1 .ov-seq-badge")
+          );
+          unlockStep2(
+            document.getElementById("ov-seq-2"),
+            ovOpenForm
+          );
+          ovSigninBtn.textContent = "\u2713 Signed in? Continue to Step 2";
+          ovSigninBtn.style.background = "rgba(0,107,63,.5)";
+        });
         ovOpenForm.addEventListener("click", function () {
-          window.open(FORMS_SIGNIN_URL, "_blank", "noopener,noreferrer");
+          window.open(FORMS_URL, "_blank", "noopener,noreferrer");
+        });
+      }
+
+      // ---- CARD step 1: Sign In ----
+      var cardSigninBtn = document.getElementById("card-signin-btn");
+      var cardOpenForm  = document.getElementById("card-open-form");
+      if (cardSigninBtn && cardOpenForm) {
+        cardSigninBtn.addEventListener("click", function () {
+          window.open(MS_LOGIN_URL, "_blank", "noopener,noreferrer");
+          markStep1Done(
+            document.getElementById("card-seq-1"),
+            document.querySelector("#card-seq-1 .card-seq-badge")
+          );
+          unlockStep2(
+            document.getElementById("card-seq-2"),
+            cardOpenForm
+          );
+          cardSigninBtn.textContent = "\u2713 Signed in? Continue to Step 2";
+          cardSigninBtn.style.background = "linear-gradient(135deg,var(--green),var(--green-mid))";
+        });
+        cardOpenForm.addEventListener("click", function () {
+          window.open(FORMS_URL, "_blank", "noopener,noreferrer");
         });
       }
 
