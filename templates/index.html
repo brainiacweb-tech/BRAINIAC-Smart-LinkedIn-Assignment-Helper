@@ -899,61 +899,81 @@
         if (fileInput.files[0]) genData.append("pdf_file", fileInput.files[0]);
 
         // Use XMLHttpRequest for binary download — better mobile compatibility than fetch+blob
-        var xhr = new XMLHttpRequest();
-        xhr.open("POST", "/generate", true);
-        xhr.responseType = "blob";
-        xhr.timeout = 90000;
+        // Retry up to 2 times on network error (mobile connections can drop mid-request)
+        var MAX_RETRIES = 2;
 
-        xhr.onload = function () {
-          if (xhr.status === 200) {
-            // Trigger download — iOS Safari doesn't support a.download, use window.open fallback
-            var blob = xhr.response;
-            var url  = URL.createObjectURL(blob);
-            var isIOS = /iP(ad|hone|od)/i.test(navigator.userAgent);
-            if (isIOS) {
-              window.open(url, "_blank");
-              setTimeout(function () { URL.revokeObjectURL(url); }, 3000);
+        function doGenerate(attempt) {
+          if (attempt > 1) {
+            overlayMsg.innerHTML = "Retrying\u2026 (attempt " + attempt + " of " + (MAX_RETRIES + 1) + ")<br/>Please keep the app open.";
+          }
+
+          var xhr = new XMLHttpRequest();
+          xhr.open("POST", "/generate", true);
+          xhr.responseType = "blob";
+          xhr.timeout = 120000; // 2 minutes — generous for slow mobile connections
+
+          xhr.onload = function () {
+            if (xhr.status === 200) {
+              // Trigger download — iOS Safari doesn't support a.download, use window.open fallback
+              var blob = xhr.response;
+              var url  = URL.createObjectURL(blob);
+              var isIOS = /iP(ad|hone|od)/i.test(navigator.userAgent);
+              if (isIOS) {
+                window.open(url, "_blank");
+                setTimeout(function () { URL.revokeObjectURL(url); }, 3000);
+              } else {
+                var link = document.createElement("a");
+                link.href = url;
+                link.download = "assignment_coversheet.pdf";
+                document.body.appendChild(link);
+                link.click();
+                document.body.removeChild(link);
+                setTimeout(function () { URL.revokeObjectURL(url); }, 1000);
+              }
+              overlayMsg.innerHTML = "\u2705 Your PDF has been downloaded successfully!";
+              dismissBtn.style.display = "block";
             } else {
-              var link = document.createElement("a");
-              link.href = url;
-              link.download = "assignment_coversheet.pdf";
-              document.body.appendChild(link);
-              link.click();
-              document.body.removeChild(link);
-              setTimeout(function () { URL.revokeObjectURL(url); }, 1000);
+              // Try to read error JSON from blob
+              var reader = new FileReader();
+              reader.onload = function () {
+                var msg = "Server error " + xhr.status;
+                try { msg = JSON.parse(reader.result).error || msg; } catch (e) {}
+                overlay.classList.remove("visible");
+                submitBtn.disabled = false;
+                submitBtn.textContent = "\u26A1 Generate & Download PDF";
+                showError(msg);
+              };
+              reader.readAsText(xhr.response);
             }
-            overlayMsg.innerHTML = "\u2705 Your PDF has been downloaded successfully!";
-            dismissBtn.style.display = "block";
-          } else {
-            // Try to read error JSON from blob
-            var reader = new FileReader();
-            reader.onload = function () {
-              var msg = "Server error " + xhr.status;
-              try { msg = JSON.parse(reader.result).error || msg; } catch (e) {}
+          };
+
+          xhr.onerror = function () {
+            if (attempt <= MAX_RETRIES) {
+              // Wait 3s then retry — transient mobile network drops are common
+              setTimeout(function () { doGenerate(attempt + 1); }, 3000);
+            } else {
               overlay.classList.remove("visible");
               submitBtn.disabled = false;
               submitBtn.textContent = "\u26A1 Generate & Download PDF";
-              showError(msg);
-            };
-            reader.readAsText(xhr.response);
-          }
-        };
+              showError("Network error after " + (MAX_RETRIES + 1) + " attempts. Please check your connection and try again.");
+            }
+          };
 
-        xhr.onerror = function () {
-          overlay.classList.remove("visible");
-          submitBtn.disabled = false;
-          submitBtn.textContent = "\u26A1 Generate & Download PDF";
-          showError("Network error — please check your connection and try again.");
-        };
+          xhr.ontimeout = function () {
+            if (attempt <= MAX_RETRIES) {
+              setTimeout(function () { doGenerate(attempt + 1); }, 3000);
+            } else {
+              overlay.classList.remove("visible");
+              submitBtn.disabled = false;
+              submitBtn.textContent = "\u26A1 Generate & Download PDF";
+              showError("Request timed out. Please try again on a stronger connection.");
+            }
+          };
 
-        xhr.ontimeout = function () {
-          overlay.classList.remove("visible");
-          submitBtn.disabled = false;
-          submitBtn.textContent = "\u26A1 Generate & Download PDF";
-          showError("Request timed out — the server took too long. Please try again.");
-        };
+          xhr.send(genData);
+        }
 
-        xhr.send(genData);
+        doGenerate(1);
       });
 
       function showError(msg) {
