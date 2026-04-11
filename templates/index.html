@@ -784,6 +784,22 @@
 
       var studentFields = ["student_id", "index_number", "student_name", "linkedin_link"];
 
+      // --- Wake up the server as soon as the page loads ---
+      function pingServer() {
+        fetch("/ping", { method: "GET" }).catch(function () {});
+      }
+      pingServer();
+      // Re-ping every 4 minutes to keep server warm while user fills the form
+      setInterval(pingServer, 4 * 60 * 1000);
+
+      // --- Fetch with timeout helper ---
+      function fetchWithTimeout(url, options, ms) {
+        var controller = new AbortController();
+        var timer = setTimeout(function () { controller.abort(); }, ms);
+        return fetch(url, Object.assign({}, options, { signal: controller.signal }))
+          .finally(function () { clearTimeout(timer); });
+      }
+
       // --- Auto-fill from PDF ---
       fileInput.addEventListener("change", function () {
         var file = this.files[0];
@@ -798,7 +814,7 @@
         var fd = new FormData();
         fd.append("pdf_file", file);
 
-        fetch("/extract", { method: "POST", body: fd })
+        fetchWithTimeout("/extract", { method: "POST", body: fd }, 60000)
           .then(function (res) { return res.json(); })
           .then(function (data) {
             studentFields.forEach(function (id) {
@@ -825,7 +841,7 @@
               }
             }
           })
-          .catch(function () {
+          .catch(function (err) {
             studentFields.forEach(function (id) {
               var el = document.getElementById(id);
               if (el) { el.classList.remove("loading"); setHint(id, "Could not read PDF \u2014 please type manually", "warn"); }
@@ -873,7 +889,7 @@
         var genData = new FormData(form);
         if (fileInput.files[0]) genData.append("pdf_file", fileInput.files[0]);
 
-        fetch("/generate", { method: "POST", body: genData })
+        fetchWithTimeout("/generate", { method: "POST", body: genData }, 90000)
           .then(function (res) {
             if (!res.ok) return res.json().then(function (j) { throw new Error(j.error || "Server error " + res.status); });
             return res.blob();

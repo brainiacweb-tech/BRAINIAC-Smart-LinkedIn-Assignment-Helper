@@ -265,6 +265,11 @@ def index():
     return render_template("index.html")
 
 
+@app.route("/ping")
+def ping():
+    return {"status": "ok"}
+
+
 @app.route("/extract", methods=["POST"])
 def extract():
     """AJAX endpoint: receive a PDF, return extracted student fields as JSON."""
