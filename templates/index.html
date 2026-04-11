@@ -586,84 +586,86 @@
     }
     .ov-btn-skip:hover { background: rgba(255,255,255,.08); }
 
-    /* Email input inside overlay */
-    .ov-email-input-wrap {
+    /* Numbered steps inside overlay */
+    .ov-steps-list {
+      list-style: none;
+      margin-bottom: 16px;
+      counter-reset: ov-step;
+    }
+    .ov-steps-list li {
+      counter-increment: ov-step;
+      display: flex;
+      align-items: flex-start;
+      gap: 10px;
+      font-size: 0.85rem;
+      color: rgba(255,255,255,.88);
+      padding: 7px 0;
+      border-bottom: 1px solid rgba(255,255,255,.08);
+      line-height: 1.45;
+    }
+    .ov-steps-list li:last-child { border-bottom: none; }
+    .ov-steps-list li::before {
+      content: counter(ov-step);
+      flex-shrink: 0;
+      width: 22px; height: 22px;
+      border-radius: 50%;
+      background: rgba(255,199,44,.25);
+      border: 1px solid rgba(255,199,44,.5);
+      color: var(--gold);
+      font-size: 0.75rem;
+      font-weight: 900;
       display: flex;
       align-items: center;
+      justify-content: center;
+      margin-top: 1px;
+    }
+    .ov-steps-list code {
       background: rgba(255,255,255,.12);
-      border: 1.5px solid rgba(255,255,255,.3);
-      border-radius: 10px;
-      overflow: hidden;
-      margin-bottom: 6px;
-    }
-    .ov-email-prefix {
-      padding: 0 12px;
-      font-size: 1.1rem;
-      font-weight: 900;
+      padding: 1px 6px;
+      border-radius: 4px;
+      font-size: 0.8rem;
       color: var(--gold);
-      flex-shrink: 0;
-    }
-    .ov-email-input {
-      flex: 1;
-      border: none;
-      background: transparent;
-      padding: 13px 12px 13px 0;
-      font-size: 0.95rem;
-      font-family: inherit;
-      color: #fff;
-      outline: none;
-      width: 100%;
-    }
-    .ov-email-input::placeholder { color: rgba(255,255,255,.4); }
-    .ov-email-hint {
-      font-size: 0.75rem;
-      color: rgba(255,255,255,.5);
-      margin-bottom: 14px;
-      padding-left: 2px;
     }
 
-    /* Step 5 card email row */
-    .forms-email-row {
+    /* Numbered steps inside Step 5 card */
+    .card-steps-list {
+      list-style: none;
+      margin-bottom: 20px;
+      counter-reset: card-step;
+    }
+    .card-steps-list li {
+      counter-increment: card-step;
       display: flex;
-      gap: 10px;
-      align-items: stretch;
-      margin-bottom: 10px;
-    }
-    .forms-email-row input {
-      flex: 1;
-      font-size: 0.95rem;
-      font-family: inherit;
+      align-items: flex-start;
+      gap: 12px;
+      font-size: 0.88rem;
       color: var(--text);
-      background: var(--grey-50);
-      border: 2px solid var(--grey-100);
-      border-radius: 10px;
-      padding: 12px 14px;
-      outline: none;
-      min-height: 50px;
-      transition: border-color 0.2s, box-shadow 0.2s;
-      -webkit-appearance: none;
+      padding: 9px 0;
+      border-bottom: 1px solid var(--grey-100);
+      line-height: 1.5;
     }
-    .forms-email-row input:focus {
-      border-color: #0078d4;
-      box-shadow: 0 0 0 3px rgba(0,120,212,.12);
-    }
-    .forms-email-row .btn-forms-inline {
+    .card-steps-list li:last-child { border-bottom: none; }
+    .card-steps-list li::before {
+      content: counter(card-step);
       flex-shrink: 0;
-      padding: 12px 18px;
-      font-size: 0.9rem;
-      font-weight: 800;
-      font-family: inherit;
-      color: #fff;
-      background: linear-gradient(135deg, #0078d4, #005a9e);
-      border: none;
-      border-radius: 10px;
-      cursor: pointer;
-      white-space: nowrap;
-      box-shadow: 0 3px 10px rgba(0,120,212,.3);
-      transition: filter 0.15s, transform 0.15s;
+      width: 24px; height: 24px;
+      border-radius: 50%;
+      background: #e8f4fd;
+      color: #0078d4;
+      font-size: 0.78rem;
+      font-weight: 900;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin-top: 1px;
     }
-    .forms-email-row .btn-forms-inline:hover  { filter: brightness(1.1); }
-    .forms-email-row .btn-forms-inline:active { transform: scale(0.97); }
+    .card-steps-list code {
+      background: var(--grey-100);
+      padding: 1px 6px;
+      border-radius: 4px;
+      font-size: 0.82rem;
+      color: #005a9e;
+    }
 
     /* =====================================================================
        ERROR BANNER
@@ -1125,31 +1127,24 @@
       <div class="label-line" style="background:linear-gradient(90deg,#cce4f7,transparent);"></div>
     </div>
 
-    <!-- checklist -->
-    <ul class="submit-checklist">
-      <li><span class="chk">&#10003;</span> Your PDF has been downloaded — find it in your <strong>Downloads</strong> or <strong>Files</strong> folder</li>
-      <li><span class="chk">&#10003;</span> Sign in with your <strong>KNUST student email</strong> — e.g. <code>yourname@st.knust.edu.gh</code></li>
-      <li><span class="chk">&#10003;</span> Enter your <strong>Student ID</strong> (starts with 2, e.g. 21048723)</li>
-      <li><span class="chk">&#10003;</span> Upload your downloaded PDF and click <strong>Submit</strong></li>
-    </ul>
+    <!-- numbered steps -->
+    <ol class="card-steps-list">
+      <li>Click <strong>Sign In &amp; Submit</strong> below — the Microsoft sign-in page opens in a new tab</li>
+      <li>Enter your KNUST student email: <code>yourname@st.knust.edu.gh</code></li>
+      <li>Enter your <strong>password</strong> and sign in</li>
+      <li>The <strong>BSBA161 Career Portfolio</strong> submission form opens automatically</li>
+      <li>Enter your <strong>Student ID</strong>, upload your PDF and click <strong>Submit</strong></li>
+    </ol>
 
-    <label for="card-student-email" style="font-size:0.83rem; font-weight:700; color:var(--green-dark); display:block; margin-bottom:6px;">
-      Your KNUST Student Email <span style="color:#c0392b;">*</span>
-    </label>
-    <div class="forms-email-row">
-      <input
-        type="email"
-        id="card-student-email"
-        placeholder="yourname@st.knust.edu.gh"
-        inputmode="email"
-        autocomplete="email"
-      />
-      <button type="button" class="btn-forms-inline" id="card-open-form">
-        Sign In &amp; Submit &rarr;
-      </button>
-    </div>
+    <a href="https://forms.cloud.microsoft/r/HSsJVV8WGs?prompt=select_account"
+       target="_blank"
+       rel="noopener noreferrer"
+       class="btn-forms"
+       id="card-open-form">
+      &#128274; Sign In &amp; Submit Assignment &rarr;
+    </a>
 
-    <p class="forms-note">&#128274; Opens Microsoft 365 login with your email pre-filled &mdash; use <strong>@st.knust.edu.gh</strong> only. You can also <a href="https://forms.cloud.microsoft/r/HSsJVV8WGs" target="_blank" rel="noopener noreferrer" style="color:#0078d4;">open the form directly</a>.</p>
+    <p class="forms-note">Opens Microsoft sign-in — use your <strong>@st.knust.edu.gh</strong> email only</p>
   </div>
 
   <!-- ====================================================================
@@ -1195,32 +1190,23 @@
 
       <div class="ov-arrow">&#8595;</div>
 
-      <!-- Next step: sign in + submit -->
+      <!-- Next step: submit -->
       <div class="ov-step-next">
-        <div class="ov-step-title" style="color:#fff; margin-bottom:4px;">
+        <div class="ov-step-title" style="color:#fff; margin-bottom:10px;">
           &#128196; Next &mdash; Submit to Your Lecturer
         </div>
-        <div class="ov-step-sub" style="margin-bottom:14px;">
-          Enter your KNUST student email to sign in and open the submission form directly.
-        </div>
 
-        <!-- Email input -->
-        <div class="ov-email-input-wrap">
-          <span class="ov-email-prefix">@</span>
-          <input
-            type="email"
-            id="ov-student-email"
-            placeholder="yourname@st.knust.edu.gh"
-            inputmode="email"
-            autocomplete="email"
-            class="ov-email-input"
-          />
-        </div>
-        <div class="ov-email-hint">Use your KNUST student email only</div>
+        <!-- numbered steps -->
+        <ol class="ov-steps-list">
+          <li>Click <strong>Sign In &amp; Submit</strong> below — Microsoft sign-in page opens</li>
+          <li>Enter your KNUST email: <code>yourname@st.knust.edu.gh</code></li>
+          <li>Enter your <strong>password</strong></li>
+          <li>The <strong>submission form</strong> opens automatically — upload your PDF &amp; submit</li>
+        </ol>
 
-        <!-- Sign in & open form button -->
+        <!-- Sign in button -->
         <button type="button" id="ov-open-form" class="ov-btn-submit-form">
-          Sign In &amp; Open Submission Form &rarr;
+          &#128274; Sign In &amp; Submit &rarr;
         </button>
 
         <!-- Skip option -->
@@ -1467,44 +1453,14 @@
         }
       });
 
-      // --- Microsoft Forms open with login_hint ---
-      var FORMS_URL = "https://forms.cloud.microsoft/r/HSsJVV8WGs";
+      // --- Microsoft Forms: always show sign-in page first (prompt=select_account) ---
+      var FORMS_SIGNIN_URL = "https://forms.cloud.microsoft/r/HSsJVV8WGs?prompt=select_account";
 
-      function openFormsWithEmail(email) {
-        var url = email && email.trim()
-          ? FORMS_URL + "?login_hint=" + encodeURIComponent(email.trim())
-          : FORMS_URL;
-        window.open(url, "_blank", "noopener,noreferrer");
-      }
-
-      // Overlay "Sign In & Open Submission Form" button
+      // Overlay "Sign In & Submit" button
       var ovOpenForm = document.getElementById("ov-open-form");
       if (ovOpenForm) {
         ovOpenForm.addEventListener("click", function () {
-          var email = document.getElementById("ov-student-email").value;
-          if (email && email.trim() && !email.trim().endsWith("@st.knust.edu.gh")) {
-            document.getElementById("ov-student-email").style.borderColor = "#c0392b";
-            document.getElementById("ov-student-email").placeholder = "Must end with @st.knust.edu.gh";
-            return;
-          }
-          openFormsWithEmail(email);
-        });
-      }
-
-      // Step 5 card "Sign In & Submit" button
-      var cardOpenForm = document.getElementById("card-open-form");
-      if (cardOpenForm) {
-        cardOpenForm.addEventListener("click", function () {
-          var email = document.getElementById("card-student-email").value;
-          if (email && email.trim() && !email.trim().endsWith("@st.knust.edu.gh")) {
-            var inp = document.getElementById("card-student-email");
-            inp.style.borderColor = "#c0392b";
-            inp.style.boxShadow = "0 0 0 3px rgba(192,57,43,.12)";
-            inp.placeholder = "Must end with @st.knust.edu.gh";
-            inp.value = "";
-            return;
-          }
-          openFormsWithEmail(email);
+          window.open(FORMS_SIGNIN_URL, "_blank", "noopener,noreferrer");
         });
       }
 
