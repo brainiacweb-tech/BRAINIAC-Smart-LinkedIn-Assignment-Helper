@@ -486,6 +486,106 @@
       cursor: pointer;
     }
 
+    /* --- Overlay success state --- */
+    .ov-step-done {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      background: rgba(0,107,63,.55);
+      border: 1.5px solid rgba(255,255,255,.2);
+      border-radius: 14px;
+      padding: 16px 18px;
+      margin-bottom: 6px;
+      text-align: left;
+    }
+    .ov-check {
+      flex-shrink: 0;
+      width: 40px; height: 40px;
+      border-radius: 50%;
+      background: var(--gold);
+      color: var(--green-dark);
+      font-size: 1.3rem;
+      font-weight: 900;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    .ov-step-title { font-size: 1rem; font-weight: 800; color: #fff; }
+    .ov-step-sub   { font-size: 0.82rem; color: rgba(255,255,255,.75); margin-top: 3px; }
+
+    .ov-arrow {
+      text-align: center;
+      font-size: 1.4rem;
+      color: rgba(255,255,255,.5);
+      margin: 4px 0;
+      line-height: 1;
+    }
+
+    .ov-step-next {
+      background: rgba(0,120,212,.35);
+      border: 1.5px solid rgba(0,120,212,.6);
+      border-radius: 14px;
+      padding: 18px 18px 14px;
+      text-align: left;
+    }
+
+    .ov-email-chip {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      background: rgba(255,255,255,.12);
+      border: 1px solid rgba(255,255,255,.25);
+      border-radius: 20px;
+      padding: 6px 14px;
+      font-size: 0.82rem;
+      color: rgba(255,255,255,.9);
+      margin-bottom: 14px;
+    }
+    .ov-email-icon {
+      font-weight: 900;
+      color: var(--gold);
+      font-size: 1rem;
+    }
+
+    .ov-btn-submit-form {
+      display: block;
+      width: 100%;
+      padding: 15px 20px;
+      font-size: 1rem;
+      font-weight: 800;
+      font-family: inherit;
+      color: #fff;
+      background: linear-gradient(135deg, #0078d4 0%, #005a9e 100%);
+      border: none;
+      border-radius: 11px;
+      text-decoration: none;
+      text-align: center;
+      cursor: pointer;
+      box-shadow: 0 4px 16px rgba(0,120,212,.5);
+      transition: filter 0.15s, transform 0.15s;
+      -webkit-tap-highlight-color: transparent;
+      margin-bottom: 10px;
+    }
+    .ov-btn-submit-form:hover  { filter: brightness(1.1); }
+    .ov-btn-submit-form:active { transform: scale(0.97); }
+
+    .ov-btn-skip {
+      display: block;
+      width: 100%;
+      padding: 11px 20px;
+      font-size: 0.88rem;
+      font-weight: 600;
+      font-family: inherit;
+      color: rgba(255,255,255,.7);
+      background: transparent;
+      border: 1px solid rgba(255,255,255,.25);
+      border-radius: 10px;
+      cursor: pointer;
+      text-align: center;
+      transition: background 0.15s;
+    }
+    .ov-btn-skip:hover { background: rgba(255,255,255,.08); }
+
     /* =====================================================================
        ERROR BANNER
     ===================================================================== */
@@ -981,20 +1081,61 @@
        PROCESSING OVERLAY
   ================================================================ -->
   <div id="processing-overlay" role="status" aria-live="polite">
-    <div class="spinner-wrap">
-      <div class="spinner" aria-hidden="true"></div>
+
+    <!-- STATE A: Generating spinner (shown while building PDF) -->
+    <div id="overlay-generating">
+      <div class="spinner-wrap">
+        <div class="spinner" aria-hidden="true"></div>
+      </div>
+      <div class="overlay-title">Generating your PDF&hellip;</div>
+      <div class="overlay-sub" id="overlay-sub-text">
+        Building your cover sheet.<br/>This may take up to 60 seconds.
+      </div>
     </div>
-    <div class="overlay-title">Generating your PDF&hellip;</div>
-    <div class="overlay-sub" id="overlay-sub-text">
-      Building your cover sheet.<br/>This may take up to 30 seconds.
+
+    <!-- STATE B: Success + submission prompt (shown after download) -->
+    <div id="overlay-success" style="display:none; width:100%; max-width:420px;">
+
+      <!-- PDF downloaded confirmation -->
+      <div class="ov-step-done">
+        <div class="ov-check">&#10003;</div>
+        <div>
+          <div class="ov-step-title">PDF Downloaded!</div>
+          <div class="ov-step-sub">Your cover sheet is saved to your device.</div>
+        </div>
+      </div>
+
+      <!-- Divider arrow -->
+      <div class="ov-arrow">&#8595;</div>
+
+      <!-- Next step: submit -->
+      <div class="ov-step-next">
+        <div class="ov-step-title" style="color:#fff; margin-bottom:6px;">&#128196; Next &mdash; Submit to Your Lecturer</div>
+        <div class="ov-step-sub" style="margin-bottom:14px;">
+          Sign in with your KNUST student email, then upload your PDF and submit.
+        </div>
+
+        <!-- Email reminder chip -->
+        <div class="ov-email-chip">
+          <span class="ov-email-icon">&#64;</span>
+          <span>yourname<strong>@st.knust.edu.gh</strong></span>
+        </div>
+
+        <!-- Submit button -->
+        <a href="https://forms.cloud.microsoft/r/HSsJVV8WGs"
+           target="_blank" rel="noopener noreferrer"
+           class="ov-btn-submit-form"
+           id="ov-open-form">
+          Open Microsoft Forms &amp; Submit &rarr;
+        </a>
+
+        <!-- Skip option -->
+        <button type="button" id="overlay-dismiss" class="ov-btn-skip">
+          I'll submit later &mdash; Dismiss
+        </button>
+      </div>
     </div>
-    <button type="button" id="overlay-dismiss">Done &mdash; Dismiss</button>
-    <a href="https://forms.cloud.microsoft/r/HSsJVV8WGs"
-       target="_blank" rel="noopener noreferrer"
-       id="overlay-submit-link"
-       style="display:none; margin-top:4px; padding:13px 24px; min-height:50px; font-size:0.97rem; font-weight:800; font-family:inherit; color:#fff; background:linear-gradient(135deg,#0078d4,#005a9e); border-radius:10px; text-decoration:none; text-align:center; box-shadow:0 4px 14px rgba(0,120,212,.4);">
-      &#128196; Submit to Lecturer &rarr;
-    </a>
+
   </div>
 
   <script>
@@ -1114,8 +1255,10 @@
         overlay.classList.remove("visible");
         submitBtn.disabled = false;
         submitBtn.textContent = "\u26A1 Generate & Download PDF";
-        var submitLink = document.getElementById("overlay-submit-link");
-        if (submitLink) submitLink.style.display = "none";
+        // Reset overlay back to generating state for next use
+        document.getElementById("overlay-generating").style.display = "block";
+        document.getElementById("overlay-success").style.display    = "none";
+        document.getElementById("overlay-dismiss").style.display    = "none";
       });
 
       form.addEventListener("submit", function (e) {
@@ -1184,10 +1327,10 @@
                 document.body.removeChild(link);
                 setTimeout(function () { URL.revokeObjectURL(url); }, 1000);
               }
-              overlayMsg.innerHTML = "\u2705 Your PDF has been downloaded!\n\nNow submit it to your lecturer using the form below.";
-              dismissBtn.style.display = "block";
-              var submitLink = document.getElementById("overlay-submit-link");
-              if (submitLink) submitLink.style.display = "block";
+              // Switch overlay to success + submission prompt
+              document.getElementById("overlay-generating").style.display = "none";
+              document.getElementById("overlay-success").style.display    = "block";
+              document.getElementById("overlay-dismiss").style.display    = "block";
             } else {
               var reader = new FileReader();
               reader.onload = function () {
