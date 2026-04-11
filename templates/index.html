@@ -792,12 +792,21 @@
       // Re-ping every 4 minutes to keep server warm while user fills the form
       setInterval(pingServer, 4 * 60 * 1000);
 
-      // --- Fetch with timeout helper ---
+      // --- Fetch with timeout helper (no .finally — broader browser support) ---
       function fetchWithTimeout(url, options, ms) {
+        // Fallback to plain fetch if AbortController not supported
+        if (typeof AbortController === "undefined") {
+          return fetch(url, options);
+        }
         var controller = new AbortController();
         var timer = setTimeout(function () { controller.abort(); }, ms);
-        return fetch(url, Object.assign({}, options, { signal: controller.signal }))
-          .finally(function () { clearTimeout(timer); });
+        var opts = {};
+        for (var k in options) { if (options.hasOwnProperty(k)) opts[k] = options[k]; }
+        opts.signal = controller.signal;
+        return fetch(url, opts).then(
+          function (res) { clearTimeout(timer); return res; },
+          function (err) { clearTimeout(timer); throw err; }
+        );
       }
 
       // --- Auto-fill from PDF ---
