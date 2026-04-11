@@ -538,6 +538,76 @@
     }
 
     /* =====================================================================
+       STEP 5 — SUBMISSION CARD
+    ===================================================================== */
+    .submit-checklist {
+      list-style: none;
+      margin-bottom: 20px;
+    }
+    .submit-checklist li {
+      display: flex;
+      align-items: flex-start;
+      gap: 10px;
+      font-size: 0.88rem;
+      color: var(--text);
+      padding: 8px 0;
+      border-bottom: 1px solid var(--grey-100);
+      line-height: 1.5;
+    }
+    .submit-checklist li:last-child { border-bottom: none; }
+    .chk {
+      flex-shrink: 0;
+      width: 22px; height: 22px;
+      background: #e8f4fd;
+      color: #0078d4;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 0.8rem;
+      font-weight: 900;
+      margin-top: 1px;
+    }
+    .submit-checklist code {
+      background: var(--grey-100);
+      padding: 1px 6px;
+      border-radius: 4px;
+      font-size: 0.82rem;
+      color: var(--green-dark);
+    }
+
+    .btn-forms {
+      display: block;
+      width: 100%;
+      min-height: 58px;
+      padding: 16px 20px;
+      font-size: 1.05rem;
+      font-weight: 800;
+      font-family: inherit;
+      color: #ffffff;
+      background: linear-gradient(135deg, #0078d4 0%, #005a9e 100%);
+      border: none;
+      border-radius: 12px;
+      cursor: pointer;
+      text-align: center;
+      text-decoration: none;
+      letter-spacing: 0.02em;
+      box-shadow: 0 4px 16px rgba(0,120,212,.35);
+      transition: filter 0.15s, box-shadow 0.15s, transform 0.15s;
+      -webkit-tap-highlight-color: transparent;
+    }
+    .btn-forms:hover  { filter: brightness(1.08); box-shadow: 0 6px 20px rgba(0,120,212,.45); }
+    .btn-forms:active { transform: scale(0.97); }
+
+    .forms-note {
+      margin-top: 12px;
+      font-size: 0.78rem;
+      color: var(--grey-600);
+      text-align: center;
+      line-height: 1.5;
+    }
+
+    /* =====================================================================
        DESKTOP LAYOUT  (≥ 768 px)
     ===================================================================== */
     @media (min-width: 768px) {
@@ -670,6 +740,11 @@
     <div class="step-dot active">
       <div class="circle">4</div>
       <div class="label">LinkedIn<br/>URL</div>
+    </div>
+    <div class="step-line"></div>
+    <div class="step-dot active">
+      <div class="circle">5</div>
+      <div class="label">Submit<br/>to Lecturer</div>
     </div>
   </div>
 
@@ -855,6 +930,40 @@
 
   </form>
 
+  <!-- ================================================================
+       CARD 5 — Submit to Lecturer (Microsoft Forms)
+  ================================================================ -->
+  <div class="card submit-card" style="border-top-color: #0078d4; margin-top: 14px;">
+    <div class="section-label" style="color:#0078d4;">
+      <div class="icon" style="background:#0078d4;">
+        <svg viewBox="0 0 24 24" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
+          <polyline points="17 8 12 3 7 8"/>
+          <line x1="12" y1="3" x2="12" y2="15"/>
+        </svg>
+      </div>
+      Step 5 &mdash; Submit to Your Lecturer
+      <div class="label-line" style="background:linear-gradient(90deg,#cce4f7,transparent);"></div>
+    </div>
+
+    <!-- checklist -->
+    <ul class="submit-checklist">
+      <li><span class="chk">&#10003;</span> Your PDF has been downloaded — find it in your <strong>Downloads</strong> or <strong>Files</strong> folder</li>
+      <li><span class="chk">&#10003;</span> Sign in with your <strong>KNUST student email</strong> — e.g. <code>yourname@st.knust.edu.gh</code></li>
+      <li><span class="chk">&#10003;</span> Enter your <strong>Student ID</strong> (starts with 2, e.g. 21048723)</li>
+      <li><span class="chk">&#10003;</span> Upload your downloaded PDF and click <strong>Submit</strong></li>
+    </ul>
+
+    <a href="https://forms.cloud.microsoft/r/HSsJVV8WGs"
+       target="_blank"
+       rel="noopener noreferrer"
+       class="btn-forms">
+      &#128196; Open Submission Form &rarr;
+    </a>
+
+    <p class="forms-note">&#128274; Requires your KNUST Microsoft 365 login &mdash; use <strong>@st.knust.edu.gh</strong> email only</p>
+  </div>
+
   <!-- ====================================================================
        FOOTER
   ==================================================================== -->
@@ -880,6 +989,12 @@
       Building your cover sheet.<br/>This may take up to 30 seconds.
     </div>
     <button type="button" id="overlay-dismiss">Done &mdash; Dismiss</button>
+    <a href="https://forms.cloud.microsoft/r/HSsJVV8WGs"
+       target="_blank" rel="noopener noreferrer"
+       id="overlay-submit-link"
+       style="display:none; margin-top:4px; padding:13px 24px; min-height:50px; font-size:0.97rem; font-weight:800; font-family:inherit; color:#fff; background:linear-gradient(135deg,#0078d4,#005a9e); border-radius:10px; text-decoration:none; text-align:center; box-shadow:0 4px 14px rgba(0,120,212,.4);">
+      &#128196; Submit to Lecturer &rarr;
+    </a>
   </div>
 
   <script>
@@ -999,6 +1114,8 @@
         overlay.classList.remove("visible");
         submitBtn.disabled = false;
         submitBtn.textContent = "\u26A1 Generate & Download PDF";
+        var submitLink = document.getElementById("overlay-submit-link");
+        if (submitLink) submitLink.style.display = "none";
       });
 
       form.addEventListener("submit", function (e) {
@@ -1067,8 +1184,10 @@
                 document.body.removeChild(link);
                 setTimeout(function () { URL.revokeObjectURL(url); }, 1000);
               }
-              overlayMsg.innerHTML = "\u2705 Your PDF has been downloaded!";
+              overlayMsg.innerHTML = "\u2705 Your PDF has been downloaded!\n\nNow submit it to your lecturer using the form below.";
               dismissBtn.style.display = "block";
+              var submitLink = document.getElementById("overlay-submit-link");
+              if (submitLink) submitLink.style.display = "block";
             } else {
               var reader = new FileReader();
               reader.onload = function () {
