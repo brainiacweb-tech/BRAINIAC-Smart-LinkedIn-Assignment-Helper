@@ -1,0 +1,906 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>BRAINIAC Smart LinkedIn Assignment Helper</title>
+  <style>
+    /* =====================================================================
+       RESET & BASE
+    ===================================================================== */
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html { font-size: 16px; -webkit-text-size-adjust: 100%; }
+
+    /* =====================================================================
+       KNUST COLOUR TOKENS
+    ===================================================================== */
+    :root {
+      --green-dark:   #004d2c;
+      --green:        #006B3F;
+      --green-mid:    #008751;
+      --green-light:  #e6f2ec;
+      --gold:         #FFC72C;
+      --gold-dark:    #e0a800;
+      --gold-light:   #fff8e1;
+      --white:        #ffffff;
+      --grey-50:      #f8faf9;
+      --grey-100:     #eef2ef;
+      --grey-300:     #c5d5cb;
+      --grey-600:     #5a7068;
+      --text:         #0d2b1e;
+    }
+
+    /* =====================================================================
+       BODY — subtle diamond pattern background
+    ===================================================================== */
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto,
+                   "Helvetica Neue", Arial, sans-serif;
+      background-color: #f0f7f3;
+      background-image:
+        linear-gradient(45deg, rgba(0,107,63,.04) 25%, transparent 25%),
+        linear-gradient(-45deg, rgba(0,107,63,.04) 25%, transparent 25%),
+        linear-gradient(45deg, transparent 75%, rgba(0,107,63,.04) 75%),
+        linear-gradient(-45deg, transparent 75%, rgba(0,107,63,.04) 75%);
+      background-size: 20px 20px;
+      background-position: 0 0, 0 10px, 10px -10px, -10px 0px;
+      color: var(--text);
+      min-height: 100vh;
+      padding-bottom: 48px;
+    }
+
+    /* =====================================================================
+       HEADER
+    ===================================================================== */
+    .site-header {
+      background: linear-gradient(135deg, var(--green-dark) 0%, var(--green) 60%, var(--green-mid) 100%);
+      padding: 0;
+      position: relative;
+      overflow: hidden;
+    }
+
+    /* Decorative circles in header */
+    .site-header::before {
+      content: "";
+      position: absolute;
+      top: -40px; right: -40px;
+      width: 160px; height: 160px;
+      border-radius: 50%;
+      background: rgba(255,199,44,.15);
+    }
+    .site-header::after {
+      content: "";
+      position: absolute;
+      bottom: -30px; left: -30px;
+      width: 120px; height: 120px;
+      border-radius: 50%;
+      background: rgba(255,199,44,.1);
+    }
+
+    .header-inner {
+      position: relative;
+      z-index: 1;
+      padding: 28px 20px 22px;
+      text-align: center;
+    }
+
+    /* Gold badge pill */
+    .header-badge {
+      display: inline-block;
+      background: var(--gold);
+      color: var(--green-dark);
+      font-size: 0.65rem;
+      font-weight: 800;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      padding: 4px 14px;
+      border-radius: 20px;
+      margin-bottom: 10px;
+    }
+
+    .site-header h1 {
+      color: var(--white);
+      font-size: 1.35rem;
+      font-weight: 800;
+      letter-spacing: 0.01em;
+      line-height: 1.35;
+      text-shadow: 0 1px 4px rgba(0,0,0,.25);
+    }
+
+    .site-header h1 span {
+      color: var(--gold);
+    }
+
+    .header-sub {
+      color: rgba(255,255,255,.8);
+      font-size: 0.85rem;
+      margin-top: 6px;
+    }
+
+    /* Gold divider line */
+    .header-divider {
+      height: 4px;
+      background: linear-gradient(90deg, transparent, var(--gold), var(--gold-dark), var(--gold), transparent);
+    }
+
+    /* =====================================================================
+       STEP INDICATOR
+    ===================================================================== */
+    .steps-bar {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0;
+      padding: 18px 20px 6px;
+    }
+
+    .step-dot {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 5px;
+      flex: 1;
+      max-width: 80px;
+    }
+
+    .step-dot .circle {
+      width: 32px; height: 32px;
+      border-radius: 50%;
+      background: var(--grey-100);
+      border: 2px solid var(--grey-300);
+      color: var(--grey-600);
+      font-size: 0.78rem;
+      font-weight: 700;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: background 0.3s, border-color 0.3s, color 0.3s;
+    }
+
+    .step-dot.active .circle {
+      background: var(--green);
+      border-color: var(--green);
+      color: var(--white);
+      box-shadow: 0 0 0 4px rgba(0,107,63,.18);
+    }
+
+    .step-dot .label {
+      font-size: 0.62rem;
+      font-weight: 600;
+      color: var(--grey-600);
+      text-align: center;
+      line-height: 1.2;
+    }
+
+    .step-dot.active .label { color: var(--green); }
+
+    .step-line {
+      flex: 1;
+      height: 2px;
+      background: var(--grey-300);
+      margin-bottom: 18px;
+      max-width: 40px;
+    }
+
+    /* =====================================================================
+       CARDS
+    ===================================================================== */
+    .card {
+      background: var(--white);
+      border-radius: 16px;
+      box-shadow: 0 4px 20px rgba(0,77,44,.08), 0 1px 4px rgba(0,0,0,.04);
+      margin: 14px 16px 0;
+      padding: 22px 20px;
+      border-top: 4px solid var(--green);
+      position: relative;
+      overflow: hidden;
+    }
+
+    /* Gold corner accent */
+    .card::after {
+      content: "";
+      position: absolute;
+      top: 0; right: 0;
+      width: 0; height: 0;
+      border-style: solid;
+      border-width: 0 32px 32px 0;
+      border-color: transparent var(--gold) transparent transparent;
+    }
+
+    /* =====================================================================
+       SECTION LABELS
+    ===================================================================== */
+    .section-label {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 0.7rem;
+      font-weight: 800;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: var(--green);
+      margin-bottom: 16px;
+    }
+
+    .section-label .icon {
+      width: 24px; height: 24px;
+      background: var(--green);
+      border-radius: 6px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+    }
+
+    .section-label .icon svg {
+      width: 13px; height: 13px;
+      stroke: var(--white);
+      fill: none;
+    }
+
+    .label-line {
+      flex: 1;
+      height: 1px;
+      background: linear-gradient(90deg, var(--green-light), transparent);
+    }
+
+    /* =====================================================================
+       FORM ELEMENTS
+    ===================================================================== */
+    .field { margin-bottom: 16px; }
+    .field:last-child { margin-bottom: 0; }
+
+    label {
+      display: block;
+      font-size: 0.83rem;
+      font-weight: 700;
+      color: var(--green-dark);
+      margin-bottom: 6px;
+    }
+
+    label .required { color: #c0392b; margin-left: 3px; }
+
+    input[type="text"],
+    input[type="url"],
+    textarea,
+    select {
+      display: block;
+      width: 100%;
+      font-size: 1rem;
+      font-family: inherit;
+      color: var(--text);
+      background: var(--grey-50);
+      border: 2px solid var(--grey-100);
+      border-radius: 10px;
+      padding: 13px 14px;
+      min-height: 50px;
+      outline: none;
+      transition: border-color 0.2s, box-shadow 0.2s, background 0.2s;
+      -webkit-appearance: none;
+      appearance: none;
+    }
+
+    input[type="text"]:focus,
+    input[type="url"]:focus,
+    textarea:focus,
+    select:focus {
+      border-color: var(--green);
+      box-shadow: 0 0 0 3px rgba(0,107,63,.12);
+      background: var(--white);
+    }
+
+    /* Loading shimmer */
+    input.loading {
+      background: linear-gradient(90deg, #e8f2ed 25%, #d4e8dc 50%, #e8f2ed 75%);
+      background-size: 200% 100%;
+      animation: shimmer 1.2s infinite;
+      color: transparent;
+      pointer-events: none;
+    }
+
+    @keyframes shimmer {
+      0%   { background-position: 200% 0; }
+      100% { background-position: -200% 0; }
+    }
+
+    .field-hint { font-size: 0.75rem; margin-top: 5px; color: var(--grey-600); }
+    .field-hint.success { color: #1a7a2a; }
+    .field-hint.warn    { color: #b05a00; }
+
+    textarea { min-height: 88px; resize: vertical; line-height: 1.5; }
+
+    /* Select arrow */
+    .select-wrapper { position: relative; }
+    .select-wrapper::after {
+      content: "";
+      position: absolute;
+      right: 14px; top: 50%;
+      transform: translateY(-50%);
+      width: 0; height: 0;
+      pointer-events: none;
+      border-left: 5px solid transparent;
+      border-right: 5px solid transparent;
+      border-top: 7px solid var(--green);
+    }
+    select { padding-right: 38px; cursor: pointer; }
+
+    /* =====================================================================
+       FILE UPLOAD
+    ===================================================================== */
+    .file-upload-label {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      padding: 16px;
+      min-height: 68px;
+      background: var(--green-light);
+      border: 2px dashed var(--green-mid);
+      border-radius: 12px;
+      cursor: pointer;
+      transition: border-color 0.2s, background 0.2s;
+    }
+
+    .file-upload-label:hover,
+    .file-upload-label:active {
+      border-color: var(--green-dark);
+      background: #cce5d7;
+    }
+
+    .file-upload-label input[type="file"] { display: none; }
+
+    .upload-icon {
+      flex-shrink: 0;
+      width: 44px; height: 44px;
+      background: var(--green);
+      border-radius: 10px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .upload-icon svg { width: 22px; height: 22px; stroke: var(--white); fill: none; }
+
+    .upload-text .primary {
+      font-size: 0.9rem;
+      font-weight: 700;
+      color: var(--green-dark);
+    }
+
+    .upload-text .secondary {
+      font-size: 0.75rem;
+      color: var(--grey-600);
+      margin-top: 2px;
+    }
+
+    #file-name-display {
+      font-size: 0.82rem;
+      color: var(--green);
+      font-weight: 700;
+      margin-top: 8px;
+      padding-left: 2px;
+      min-height: 1.2em;
+    }
+
+    /* =====================================================================
+       SUBMIT BUTTON
+    ===================================================================== */
+    .btn-submit {
+      display: block;
+      width: 100%;
+      min-height: 58px;
+      padding: 15px 20px;
+      font-size: 1.05rem;
+      font-weight: 800;
+      font-family: inherit;
+      color: var(--green-dark);
+      background: linear-gradient(135deg, var(--gold) 0%, var(--gold-dark) 100%);
+      border: none;
+      border-radius: 12px;
+      cursor: pointer;
+      letter-spacing: 0.03em;
+      text-transform: uppercase;
+      box-shadow: 0 4px 16px rgba(255,199,44,.45);
+      transition: transform 0.15s, box-shadow 0.15s, filter 0.15s;
+      -webkit-tap-highlight-color: transparent;
+    }
+
+    .btn-submit:hover  { filter: brightness(1.06); box-shadow: 0 6px 20px rgba(255,199,44,.55); }
+    .btn-submit:active { transform: scale(0.97); }
+    .btn-submit:disabled {
+      background: var(--grey-300);
+      color: var(--grey-600);
+      box-shadow: none;
+      cursor: not-allowed;
+      transform: none;
+    }
+
+    /* =====================================================================
+       PROCESSING OVERLAY
+    ===================================================================== */
+    #processing-overlay {
+      display: none;
+      position: fixed;
+      inset: 0;
+      background: rgba(0, 30, 15, 0.82);
+      z-index: 9999;
+      align-items: center;
+      justify-content: center;
+      flex-direction: column;
+      gap: 18px;
+      padding: 30px;
+      text-align: center;
+    }
+
+    #processing-overlay.visible { display: flex; }
+
+    .spinner-wrap {
+      position: relative;
+      width: 64px; height: 64px;
+    }
+
+    .spinner-wrap::before {
+      content: "";
+      position: absolute;
+      inset: 0;
+      border-radius: 50%;
+      border: 5px solid rgba(255,199,44,.2);
+    }
+
+    .spinner {
+      width: 64px; height: 64px;
+      border: 5px solid transparent;
+      border-top-color: var(--gold);
+      border-right-color: var(--gold);
+      border-radius: 50%;
+      animation: spin 0.85s linear infinite;
+    }
+
+    @keyframes spin { to { transform: rotate(360deg); } }
+
+    .overlay-title { color: var(--white); font-size: 1.15rem; font-weight: 800; }
+
+    .overlay-sub { color: rgba(255,255,255,.75); font-size: 0.9rem; line-height: 1.6; }
+
+    #overlay-dismiss {
+      display: none;
+      margin-top: 6px;
+      padding: 13px 32px;
+      min-height: 50px;
+      font-size: 1rem;
+      font-weight: 700;
+      font-family: inherit;
+      color: var(--green-dark);
+      background: var(--gold);
+      border: none;
+      border-radius: 10px;
+      cursor: pointer;
+    }
+
+    /* =====================================================================
+       ERROR BANNER
+    ===================================================================== */
+    #error-banner {
+      display: none;
+      background: #fdecea;
+      border-left: 4px solid #c0392b;
+      border-radius: 8px;
+      padding: 14px 16px;
+      margin: 14px 16px 0;
+      font-size: 0.9rem;
+      color: #8b1a1a;
+      line-height: 1.5;
+    }
+    #error-banner.visible { display: block; }
+
+    /* =====================================================================
+       FOOTER
+    ===================================================================== */
+    .footer-area {
+      text-align: center;
+      padding: 28px 20px 0;
+    }
+
+    .footer-area p {
+      font-size: 0.78rem;
+      color: var(--grey-600);
+      line-height: 1.7;
+    }
+
+    .footer-brand {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      margin-top: 10px;
+      background: var(--white);
+      border: 1.5px solid var(--grey-100);
+      border-radius: 20px;
+      padding: 6px 16px;
+      font-size: 0.78rem;
+      font-weight: 700;
+      color: var(--green-dark);
+      box-shadow: 0 2px 8px rgba(0,0,0,.06);
+    }
+
+    .footer-brand .dot {
+      width: 8px; height: 8px;
+      border-radius: 50%;
+      background: var(--gold);
+    }
+  </style>
+</head>
+<body>
+
+  <!-- ====================================================================
+       HEADER
+  ==================================================================== -->
+  <header class="site-header">
+    <div class="header-inner">
+      <div class="header-badge">KNUST &mdash; KSBS</div>
+      <h1>BRAINIAC <span>Smart</span> LinkedIn<br/>Assignment Helper</h1>
+      <p class="header-sub">Upload your PDF &bull; Fill your details &bull; Download cover sheet</p>
+    </div>
+    <div class="header-divider"></div>
+  </header>
+
+  <!-- Step indicator -->
+  <div class="steps-bar">
+    <div class="step-dot active">
+      <div class="circle">1</div>
+      <div class="label">Upload<br/>PDF</div>
+    </div>
+    <div class="step-line"></div>
+    <div class="step-dot active">
+      <div class="circle">2</div>
+      <div class="label">Student<br/>Details</div>
+    </div>
+    <div class="step-line"></div>
+    <div class="step-dot active">
+      <div class="circle">3</div>
+      <div class="label">Assignment<br/>Details</div>
+    </div>
+    <div class="step-line"></div>
+    <div class="step-dot active">
+      <div class="circle">4</div>
+      <div class="label">LinkedIn<br/>URL</div>
+    </div>
+  </div>
+
+  <!-- ERROR BANNER -->
+  <div id="error-banner" role="alert"></div>
+
+  <form id="main-form" action="/generate" method="POST" novalidate>
+
+    <!-- ================================================================
+         CARD 1 — PDF Upload
+    ================================================================ -->
+    <div class="card">
+      <div class="section-label">
+        <div class="icon">
+          <svg viewBox="0 0 24 24" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
+            <polyline points="17 8 12 3 7 8"/>
+            <line x1="12" y1="3" x2="12" y2="15"/>
+          </svg>
+        </div>
+        Step 1 &mdash; Upload Your LinkedIn Assignment PDF
+        <div class="label-line"></div>
+      </div>
+
+      <div class="field">
+        <label class="file-upload-label" for="pdf-input">
+          <div class="upload-icon">
+            <svg viewBox="0 0 24 24" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+              <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
+              <polyline points="14 2 14 8 20 8"/>
+              <line x1="12" y1="18" x2="12" y2="12"/>
+              <line x1="9" y1="15" x2="15" y2="15"/>
+            </svg>
+          </div>
+          <div class="upload-text">
+            <div class="primary">Tap to select your PDF</div>
+            <div class="secondary">Student details will be extracted automatically</div>
+          </div>
+          <input type="file" id="pdf-input" accept=".pdf,application/pdf" />
+        </label>
+        <div id="file-name-display" aria-live="polite"></div>
+      </div>
+    </div>
+
+    <!-- ================================================================
+         CARD 2 — Student Details
+    ================================================================ -->
+    <div class="card">
+      <div class="section-label">
+        <div class="icon">
+          <svg viewBox="0 0 24 24" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/>
+            <circle cx="12" cy="7" r="4"/>
+          </svg>
+        </div>
+        Step 2 &mdash; Student Details
+        <div class="label-line"></div>
+      </div>
+
+      <div class="field">
+        <label for="student_id">Student ID <span class="required">*</span></label>
+        <input type="text" id="student_id" name="student_id" placeholder="e.g. 21111881" required autocomplete="off" />
+        <div class="field-hint" id="hint-student_id"></div>
+      </div>
+
+      <div class="field">
+        <label for="index_number">Index Number <span class="required">*</span></label>
+        <input type="text" id="index_number" name="index_number" placeholder="e.g. 8765655" required autocomplete="off" />
+        <div class="field-hint" id="hint-index_number"></div>
+      </div>
+
+      <div class="field">
+        <label for="student_name">Student Name <span class="required">*</span></label>
+        <input type="text" id="student_name" name="student_name" placeholder="e.g. Akuffo Addo" required autocomplete="off" />
+        <div class="field-hint" id="hint-student_name"></div>
+      </div>
+    </div>
+
+    <!-- ================================================================
+         CARD 3 — Assignment Details
+    ================================================================ -->
+    <div class="card">
+      <div class="section-label">
+        <div class="icon">
+          <svg viewBox="0 0 24 24" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
+            <polyline points="14 2 14 8 20 8"/>
+            <line x1="16" y1="13" x2="8" y2="13"/>
+            <line x1="16" y1="17" x2="8" y2="17"/>
+            <polyline points="10 9 9 9 8 9"/>
+          </svg>
+        </div>
+        Step 3 &mdash; Assignment Details
+        <div class="label-line"></div>
+      </div>
+
+      <div class="field">
+        <label for="course_code">Course Code</label>
+        <input type="text" id="course_code" name="course_code" value="BSBA 361 BUILDING PROFESSIONAL SKILLS" />
+      </div>
+
+      <div class="field">
+        <label for="assignment_title">Assignment Title</label>
+        <textarea id="assignment_title" name="assignment_title">Professional LinkedIn Profile Development &amp; Strategic Utilization Assignment</textarea>
+      </div>
+
+      <div class="field">
+        <label for="department">Department <span class="required">*</span></label>
+        <div class="select-wrapper">
+          <select id="department" name="department" required>
+            <option value="" disabled selected>Select department…</option>
+            <option>Department of Accounting and Finance</option>
+            <option>Department of Supply Chain and Information Systems</option>
+            <option>Department of Human Resource and Organisational Development</option>
+            <option>Department of Marketing and Corporate Strategy</option>
+            <option>Department of Hospitality and Tourism Studies</option>
+          </select>
+        </div>
+      </div>
+
+      <div class="field">
+        <label for="programme">Programme <span class="required">*</span></label>
+        <div class="select-wrapper">
+          <select id="programme" name="programme" required>
+            <option value="" disabled selected>Select programme…</option>
+            <option>BSc Business Administration (Accounting)</option>
+            <option>BSc Business Administration (Banking &amp; Finance)</option>
+            <option>BSc Business Administration (Marketing)</option>
+            <option>BSc Business Administration (International Business)</option>
+            <option>BSc Business Administration (Human Resource Management)</option>
+            <option>BSc Business Administration (Management)</option>
+            <option>BSc Business Administration (Logistics and Supply Chain Management)</option>
+            <option>BSc Business Administration (Business Information Technology)</option>
+            <option>BSc Hospitality and Tourism Management</option>
+          </select>
+        </div>
+      </div>
+    </div>
+
+    <!-- ================================================================
+         CARD 4 — LinkedIn
+    ================================================================ -->
+    <div class="card">
+      <div class="section-label">
+        <div class="icon">
+          <svg viewBox="0 0 24 24" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M16 8a6 6 0 0 1 6 6v7h-4v-7a2 2 0 0 0-2-2 2 2 0 0 0-2 2v7h-4v-7a6 6 0 0 1 6-6z"/>
+            <rect x="2" y="9" width="4" height="12"/>
+            <circle cx="4" cy="4" r="2"/>
+          </svg>
+        </div>
+        Step 4 &mdash; LinkedIn Profile
+        <div class="label-line"></div>
+      </div>
+
+      <div class="field">
+        <label for="linkedin_link">LinkedIn Profile URL <span class="required">*</span></label>
+        <input
+          type="url"
+          id="linkedin_link"
+          name="linkedin_link"
+          placeholder="https://www.linkedin.com/in/your-name"
+          required
+          inputmode="url"
+          autocomplete="url"
+        />
+        <div class="field-hint" id="hint-linkedin_link"></div>
+      </div>
+    </div>
+
+    <!-- ================================================================
+         SUBMIT
+    ================================================================ -->
+    <div class="card" style="border-top-color: var(--gold); background: linear-gradient(135deg, #fff8e1 0%, #ffffff 100%);">
+      <button type="submit" class="btn-submit" id="submit-btn">
+        &#9889; Generate &amp; Download PDF
+      </button>
+    </div>
+
+  </form>
+
+  <!-- ====================================================================
+       FOOTER
+  ==================================================================== -->
+  <div class="footer-area">
+    <p>Your data is used only to fill the cover sheet and is not stored.</p>
+    <div class="footer-brand">
+      <div class="dot"></div>
+      &copy; 2025 Developed by <strong>&nbsp;Francis Kusi &mdash; BRAINIAC</strong>. All rights reserved.
+      <div class="dot"></div>
+    </div>
+  </div>
+
+  <!-- ================================================================
+       PROCESSING OVERLAY
+  ================================================================ -->
+  <div id="processing-overlay" role="status" aria-live="polite">
+    <div class="spinner-wrap">
+      <div class="spinner" aria-hidden="true"></div>
+    </div>
+    <div class="overlay-title">Generating your PDF&hellip;</div>
+    <div class="overlay-sub" id="overlay-sub-text">
+      Building your cover sheet.<br/>This may take up to 30 seconds.
+    </div>
+    <button type="button" id="overlay-dismiss">Done &mdash; Dismiss</button>
+  </div>
+
+  <script>
+    (function () {
+      "use strict";
+
+      var form        = document.getElementById("main-form");
+      var fileInput   = document.getElementById("pdf-input");
+      var fileDisplay = document.getElementById("file-name-display");
+      var submitBtn   = document.getElementById("submit-btn");
+      var overlay     = document.getElementById("processing-overlay");
+      var overlayMsg  = document.getElementById("overlay-sub-text");
+      var dismissBtn  = document.getElementById("overlay-dismiss");
+      var errorBanner = document.getElementById("error-banner");
+
+      var studentFields = ["student_id", "index_number", "student_name", "linkedin_link"];
+
+      // --- Auto-fill from PDF ---
+      fileInput.addEventListener("change", function () {
+        var file = this.files[0];
+        if (!file) return;
+        fileDisplay.textContent = "\u2714 " + file.name;
+
+        studentFields.forEach(function (id) {
+          var el = document.getElementById(id);
+          if (el) { el.classList.add("loading"); el.value = ""; setHint(id, "", ""); }
+        });
+
+        var fd = new FormData();
+        fd.append("pdf_file", file);
+
+        fetch("/extract", { method: "POST", body: fd })
+          .then(function (res) { return res.json(); })
+          .then(function (data) {
+            studentFields.forEach(function (id) {
+              var el = document.getElementById(id);
+              if (!el) return;
+              el.classList.remove("loading");
+              if (data[id]) {
+                el.value = data[id];
+                setHint(id, "\u2714 Auto-filled from PDF \u2014 edit if incorrect", "success");
+              } else {
+                setHint(id, "Not found \u2014 please type it in", "warn");
+              }
+            });
+            if (data.department) {
+              var dept = document.getElementById("department");
+              for (var i = 0; i < dept.options.length; i++) {
+                if (dept.options[i].value === data.department) { dept.selectedIndex = i; break; }
+              }
+            }
+            if (data.programme) {
+              var prog = document.getElementById("programme");
+              for (var i = 0; i < prog.options.length; i++) {
+                if (prog.options[i].value === data.programme) { prog.selectedIndex = i; break; }
+              }
+            }
+          })
+          .catch(function () {
+            studentFields.forEach(function (id) {
+              var el = document.getElementById(id);
+              if (el) { el.classList.remove("loading"); setHint(id, "Could not read PDF \u2014 please type manually", "warn"); }
+            });
+          });
+      });
+
+      function setHint(fieldId, text, type) {
+        var hint = document.getElementById("hint-" + fieldId);
+        if (hint) { hint.textContent = text; hint.className = "field-hint" + (type ? " " + type : ""); }
+      }
+
+      dismissBtn.addEventListener("click", function () {
+        overlay.classList.remove("visible");
+        submitBtn.disabled = false;
+        submitBtn.textContent = "\u26A1 Generate & Download PDF";
+      });
+
+      form.addEventListener("submit", function (e) {
+        e.preventDefault();
+        errorBanner.classList.remove("visible");
+
+        if (!fileInput.files || !fileInput.files[0]) { showError("Please upload your LinkedIn assignment PDF first."); return; }
+
+        var sid  = document.getElementById("student_id").value.trim();
+        var idx  = document.getElementById("index_number").value.trim();
+        var name = document.getElementById("student_name").value.trim();
+        var dept = document.getElementById("department").value;
+        var prog = document.getElementById("programme").value;
+        var li   = document.getElementById("linkedin_link").value.trim();
+
+        if (!sid)  { showError("Student ID is required."); return; }
+        if (!idx)  { showError("Index Number is required."); return; }
+        if (!name) { showError("Student Name is required."); return; }
+        if (!dept) { showError("Please select a Department."); return; }
+        if (!prog) { showError("Please select a Programme."); return; }
+        if (!li)   { showError("Please enter your LinkedIn Profile URL."); return; }
+
+        submitBtn.disabled = true;
+        submitBtn.textContent = "Generating\u2026";
+        overlay.classList.add("visible");
+        dismissBtn.style.display = "none";
+        overlayMsg.innerHTML = "Building your cover sheet.<br/>This may take up to 30 seconds.";
+
+        var genData = new FormData(form);
+        if (fileInput.files[0]) genData.append("pdf_file", fileInput.files[0]);
+
+        fetch("/generate", { method: "POST", body: genData })
+          .then(function (res) {
+            if (!res.ok) return res.json().then(function (j) { throw new Error(j.error || "Server error " + res.status); });
+            return res.blob();
+          })
+          .then(function (blob) {
+            var url  = URL.createObjectURL(blob);
+            var link = document.createElement("a");
+            link.href = url; link.download = "assignment_coversheet.pdf";
+            document.body.appendChild(link); link.click();
+            document.body.removeChild(link); URL.revokeObjectURL(url);
+            overlayMsg.innerHTML = "\u2705 Your PDF has been downloaded successfully!";
+            dismissBtn.style.display = "block";
+          })
+          .catch(function (err) {
+            overlay.classList.remove("visible");
+            submitBtn.disabled = false;
+            submitBtn.textContent = "\u26A1 Generate & Download PDF";
+            showError(err.message || "An unexpected error occurred. Please try again.");
+          });
+      });
+
+      function showError(msg) {
+        errorBanner.textContent = msg;
+        errorBanner.classList.add("visible");
+        errorBanner.scrollIntoView({ behavior: "smooth", block: "center" });
+      }
+    })();
+  </script>
+</body>
+</html>

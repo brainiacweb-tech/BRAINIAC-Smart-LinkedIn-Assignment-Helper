@@ -1,0 +1,19 @@
+# Python
+__pycache__/
+*.py[cod]
+*.pyo
+.env
+venv/
+env/
+
+# Temp files
+*.tmp
+*_input.pdf
+*_output.docx
+*_output.pdf
+*_extract.pdf
+*_assignment.pdf
+
+# OS
+.DS_Store
+Thumbs.db
