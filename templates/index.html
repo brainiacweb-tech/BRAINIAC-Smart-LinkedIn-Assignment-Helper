@@ -536,6 +536,99 @@
       border-radius: 50%;
       background: var(--gold);
     }
+
+    /* =====================================================================
+       DESKTOP LAYOUT  (≥ 768 px)
+    ===================================================================== */
+    @media (min-width: 768px) {
+
+      /* --- Page wrapper --- */
+      .page-wrap {
+        max-width: 1080px;
+        margin: 0 auto;
+        padding: 0 28px;
+      }
+
+      /* --- Header: logo left, text centre --- */
+      .header-inner {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 28px;
+        padding: 32px 40px 28px;
+        text-align: left;
+        max-width: 1080px;
+        margin: 0 auto;
+      }
+
+      .header-logo {
+        display: block;
+        width: 90px;
+        height: 90px;
+        object-fit: contain;
+        flex-shrink: 0;
+        filter: drop-shadow(0 4px 12px rgba(0,0,0,.35));
+        border-radius: 16px;
+      }
+
+      .header-text { flex: 1; }
+
+      .header-badge { margin-bottom: 8px; font-size: 0.7rem; }
+
+      .site-header h1 {
+        font-size: 2rem;
+        line-height: 1.25;
+      }
+
+      .header-sub { font-size: 0.95rem; margin-top: 8px; }
+
+      /* --- Step bar --- */
+      .steps-bar { padding: 24px 0 8px; }
+      .step-dot   { max-width: 100px; }
+      .step-line  { max-width: 80px; }
+      .step-dot .circle { width: 40px; height: 40px; font-size: 0.9rem; }
+      .step-dot .label  { font-size: 0.72rem; }
+
+      /* --- Error banner --- */
+      #error-banner { margin: 16px 0 0; border-radius: 10px; }
+
+      /* --- Two-column form grid --- */
+      .form-grid {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 0 20px;
+        align-items: start;
+      }
+
+      /* Cards inside grid get no side margin (wrapper handles padding) */
+      .form-grid .card { margin: 14px 0 0; padding: 28px 28px; }
+
+      /* Submit card spans both columns */
+      .submit-card { grid-column: 1 / -1; }
+
+      /* --- Side-by-side fields within a card (Student ID + Index Number) --- */
+      .field-row {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 0 16px;
+      }
+      .field-row .field { margin-bottom: 16px; }
+
+      /* --- Bigger form inputs on desktop --- */
+      input[type="text"],
+      input[type="url"],
+      textarea,
+      select { font-size: 0.97rem; padding: 13px 16px; }
+
+      /* --- Bigger submit button --- */
+      .btn-submit { font-size: 1.15rem; min-height: 62px; border-radius: 14px; }
+
+      /* --- Footer --- */
+      .footer-area { padding: 36px 0 0; }
+    }
+
+    /* Hide logo on mobile (shows only on desktop) */
+    .header-logo { display: none; }
   </style>
 </head>
 <body>
@@ -545,14 +638,19 @@
   ==================================================================== -->
   <header class="site-header">
     <div class="header-inner">
-      <div class="header-badge">KNUST &mdash; KSB</div>
-      <h1>BRAINIAC <span>Smart</span> LinkedIn<br/>Assignment Helper</h1>
-      <p class="header-sub">Upload your PDF &bull; Fill your details &bull; Download cover sheet</p>
+      <!-- Logo (desktop only) -->
+      <img src="/static/logo.png" alt="BRAINIAC Logo" class="header-logo" />
+      <div class="header-text">
+        <div class="header-badge">KNUST &mdash; KSB</div>
+        <h1>BRAINIAC <span>Smart</span> LinkedIn<br/>Assignment Helper</h1>
+        <p class="header-sub">Upload your PDF &bull; Fill your details &bull; Download cover sheet</p>
+      </div>
     </div>
     <div class="header-divider"></div>
   </header>
 
   <!-- Step indicator -->
+  <div class="page-wrap">
   <div class="steps-bar">
     <div class="step-dot active">
       <div class="circle">1</div>
@@ -579,6 +677,7 @@
   <div id="error-banner" role="alert"></div>
 
   <form id="main-form" action="/generate" method="POST" novalidate>
+  <div class="form-grid">
 
     <!-- ================================================================
          CARD 1 — PDF Upload
@@ -631,16 +730,17 @@
         <div class="label-line"></div>
       </div>
 
-      <div class="field">
-        <label for="student_id">Student ID <span class="required">*</span></label>
-        <input type="text" id="student_id" name="student_id" placeholder="e.g. 21111881" required autocomplete="off" />
-        <div class="field-hint" id="hint-student_id"></div>
-      </div>
-
-      <div class="field">
-        <label for="index_number">Index Number <span class="required">*</span></label>
-        <input type="text" id="index_number" name="index_number" placeholder="e.g. 8765655" required autocomplete="off" />
-        <div class="field-hint" id="hint-index_number"></div>
+      <div class="field-row">
+        <div class="field">
+          <label for="student_id">Student ID <span class="required">*</span></label>
+          <input type="text" id="student_id" name="student_id" placeholder="e.g. 21111881" required autocomplete="off" />
+          <div class="field-hint" id="hint-student_id"></div>
+        </div>
+        <div class="field">
+          <label for="index_number">Index Number <span class="required">*</span></label>
+          <input type="text" id="index_number" name="index_number" placeholder="e.g. 8765655" required autocomplete="off" />
+          <div class="field-hint" id="hint-index_number"></div>
+        </div>
       </div>
 
       <div class="field">
@@ -742,10 +842,12 @@
       </div>
     </div>
 
+  </div><!-- /form-grid -->
+
     <!-- ================================================================
-         SUBMIT
+         SUBMIT — spans both columns on desktop
     ================================================================ -->
-    <div class="card" style="border-top-color: var(--gold); background: linear-gradient(135deg, #fff8e1 0%, #ffffff 100%);">
+    <div class="card submit-card" style="border-top-color: var(--gold); background: linear-gradient(135deg, #fff8e1 0%, #ffffff 100%);">
       <button type="submit" class="btn-submit" id="submit-btn">
         &#9889; Generate &amp; Download PDF
       </button>
@@ -764,6 +866,7 @@
       <div class="dot"></div>
     </div>
   </div>
+  </div><!-- /page-wrap -->
 
   <!-- ================================================================
        PROCESSING OVERLAY
