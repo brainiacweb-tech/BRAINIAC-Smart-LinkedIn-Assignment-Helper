@@ -815,6 +815,62 @@
     #error-banner.visible { display: block; }
 
     /* =====================================================================
+       DISCLAIMER CARD
+    ===================================================================== */
+    .disclaimer-card {
+      background: linear-gradient(135deg, #fff3cd 0%, #fffbf0 100%);
+      border: 2px solid #ff9800;
+      border-left: 6px solid #d84315;
+      border-radius: 12px;
+      padding: 24px;
+      margin: 20px 0 24px 0;
+      font-size: 0.92rem;
+      line-height: 1.8;
+      color: #1a1a1a;
+    }
+    .disclaimer-card strong {
+      color: #d84315;
+      font-weight: 600;
+    }
+    .disclaimer-card p {
+      margin: 12px 0;
+    }
+    .disclaimer-card p:first-child {
+      margin-top: 0;
+      font-size: 1.1rem;
+      font-weight: 700;
+      color: #d84315;
+    }
+    .disclaimer-card ol {
+      margin: 14px 0 14px 24px;
+      padding: 0;
+    }
+    .disclaimer-card li {
+      margin: 8px 0;
+      color: #1a1a1a;
+    }
+    .disclaimer-card .forms-link {
+      display: inline-block;
+      margin-top: 14px;
+      padding: 12px 18px;
+      background: #0078d4;
+      color: #fff;
+      text-decoration: none;
+      border-radius: 6px;
+      font-weight: 600;
+      font-size: 0.9rem;
+      transition: background 0.2s;
+    }
+    .disclaimer-card .forms-link:hover {
+      background: #005a9e;
+    }
+    .disclaimer-divider {
+      margin-top: 14px;
+      padding-top: 14px;
+      border-top: 1px solid rgba(255,152,0,0.4);
+    }
+
+    /* =====================================================================
        FOOTER
     ===================================================================== */
     .footer-area {
@@ -1053,10 +1109,43 @@
       <div class="circle">4</div>
       <div class="label">LinkedIn<br/>URL</div>
     </div>
-    <div class="step-line"></div>
-    <div class="step-dot active">
-      <div class="circle">5</div>
-      <div class="label">Submit<br/>to Lecturer</div>
+  </div>
+
+  <!-- ====================================================================
+       DISCLAIMER CARD - TOP IMPORTANT INFO
+  ==================================================================== -->
+  <div class="disclaimer-card">
+    <p><strong>⚠️ IMPORTANT NOTICE</strong></p>
+    
+    <p>This web application is designed <strong>solely to assist you in formatting your LinkedIn assignment</strong> according to the lecturer's recommended template.</p>
+    
+    <p>It is important to clearly understand that <strong>this app does NOT submit your assignment on your behalf</strong>.</p>
+    
+    <p><strong>You are still fully responsible for:</strong></p>
+    <ul style="margin: 10px 0 10px 24px;">
+      <li>Submitting your completed work yourself</li>
+      <li>Using the official Microsoft Forms link provided by your lecturer</li>
+    </ul>
+
+    <div style="border-top: 1px solid rgba(255,152,0,0.4); margin-top: 14px; padding-top: 14px;">
+      <p style="margin: 10px 0;"><strong>Why this web app was created:</strong></p>
+      <p>Many students have been experiencing difficulties with:</p>
+      <ul style="margin: 10px 0 10px 24px;">
+        <li>Properly placing their content into the required template</li>
+        <li>Correctly structuring their assignment details</li>
+        <li>Inserting screenshots neatly and in the right format</li>
+      </ul>
+      <p>Because of these challenges, this web app was built <strong>to simplify the process of organizing and formatting your work</strong>—nothing more.</p>
+    </div>
+
+    <div style="border-top: 1px solid rgba(255,152,0,0.4); margin-top: 14px; padding-top: 14px;">
+      <p style="margin: 10px 0;"><strong>Final Reminder:</strong></p>
+      <p>This tool is only meant to help you <strong>prepare and format your assignment</strong>.<br/>It does <strong>not replace your responsibility</strong> to review, finalize, and submit your work yourself.</p>
+      <p>Please make sure you carefully go through your assignment and submit it using the official submission link.</p>
+    </div>
+
+    <div style="border-top: 2px solid #d84315; margin-top: 14px; padding-top: 14px; text-align: center;">
+      <p style="font-size: 0.95rem;"><strong>Use the app as a helper, not a substitute for your responsibility.</strong></p>
     </div>
   </div>
 
@@ -1241,51 +1330,6 @@
     </div>
 
   </form>
-
-  <!-- ================================================================
-       CARD 5 — Submit to Lecturer (Microsoft Forms)
-  ================================================================ -->
-  <div class="card submit-card" style="border-top-color: #0078d4; margin-top: 14px;">
-    <div class="section-label" style="color:#0078d4;">
-      <div class="icon" style="background:#0078d4;">
-        <svg viewBox="0 0 24 24" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-          <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
-          <polyline points="17 8 12 3 7 8"/>
-          <line x1="12" y1="3" x2="12" y2="15"/>
-        </svg>
-      </div>
-      Step 5 &mdash; Submit to Your Lecturer
-      <div class="label-line" style="background:linear-gradient(90deg,#cce4f7,transparent);"></div>
-    </div>
-
-    <!-- 2-step sequential flow -->
-    <div class="card-seq-step" id="card-seq-1">
-      <div class="card-seq-badge" id="card-badge-1">1</div>
-      <div class="card-seq-body">
-        <div class="card-seq-label">Sign in to your Microsoft account</div>
-        <div class="card-seq-hint">Use your <code>yourname@st.knust.edu.gh</code> email &amp; password</div>
-        <button type="button" id="card-signin-btn" class="btn-forms" style="margin-top:10px;">
-          &#128274; Sign In to Microsoft &rarr;
-        </button>
-        <div id="card-waiting" style="display:none; margin-top:10px;" class="card-waiting-wrap">
-          <div class="card-mini-spinner"></div>
-          <span>Waiting for sign-in&hellip; Close the sign-in tab once done.</span>
-        </div>
-      </div>
-    </div>
-
-    <div class="card-seq-arrow">&#8595;</div>
-
-    <div class="card-seq-step card-seq-locked" id="card-seq-2">
-      <div class="card-seq-badge" id="card-badge-2">2</div>
-      <div class="card-seq-body">
-        <div class="card-seq-label">Submission form</div>
-        <div class="card-seq-hint" id="card-seq-2-hint">Opens automatically after you sign in</div>
-      </div>
-    </div>
-
-    <p class="forms-note" style="margin-top:14px;">&#128274; Microsoft 365 login required &mdash; <strong>@st.knust.edu.gh</strong> only</p>
-  </div>
 
   <!-- ====================================================================
        FOOTER
@@ -1656,21 +1700,6 @@
             document.getElementById("ov-badge-1"),
             document.getElementById("ov-seq-2"),
             document.getElementById("ov-seq-2-hint")
-          );
-        });
-      }
-
-      // ---- Card sign-in button ----
-      var cardSigninBtn = document.getElementById("card-signin-btn");
-      if (cardSigninBtn) {
-        cardSigninBtn.addEventListener("click", function () {
-          startSignInFlow(
-            cardSigninBtn,
-            document.getElementById("card-waiting"),
-            document.getElementById("card-seq-1"),
-            document.getElementById("card-badge-1"),
-            document.getElementById("card-seq-2"),
-            document.getElementById("card-seq-2-hint")
           );
         });
       }
