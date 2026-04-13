@@ -1360,56 +1360,67 @@
       </div>
     </div>
 
-    <!-- STATE B: Success + 2-step submission flow -->
-    <div id="overlay-success" style="display:none; width:100%; max-width:440px;">
-
-      <!-- PDF downloaded confirmation -->
-      <div class="ov-step-done">
+    <!-- STATE B: Success confirmation with full disclaimer notice -->
+    <div id="overlay-success" style="display:none; width:100%; max-width:600px;">
+      <div class="ov-step-done" style="text-align: center; margin-bottom: 20px;">
         <div class="ov-check">&#10003;</div>
         <div>
-          <div class="ov-step-title">PDF Downloaded!</div>
-          <div class="ov-step-sub">Your cover sheet is saved to your device.</div>
+          <div class="ov-step-title" style="font-size: 1.2rem; color: #fff;">PDF Downloaded Successfully!</div>
         </div>
       </div>
 
-      <div class="ov-arrow">&#8595;</div>
-
-      <div class="ov-step-next">
-        <div class="ov-step-title" style="color:#fff; margin-bottom:14px;">
-          &#128196; Now Submit to Your Lecturer
-        </div>
-
-        <!-- STEP 1: Sign in -->
-        <div class="ov-seq-step" id="ov-seq-1">
-          <div class="ov-seq-badge" id="ov-badge-1">1</div>
-          <div class="ov-seq-body">
-            <div class="ov-seq-label">Sign in to your Microsoft account</div>
-            <div class="ov-seq-hint">Use your <code>@st.knust.edu.gh</code> email &amp; password</div>
-            <!-- idle state -->
-            <button type="button" id="ov-signin-btn" class="ov-btn-submit-form" style="margin-top:10px;">
-              &#128274; Sign In to Microsoft &rarr;
-            </button>
-            <!-- waiting state (hidden initially) -->
-            <div id="ov-waiting" style="display:none; margin-top:10px;" class="ov-waiting-wrap">
-              <div class="ov-mini-spinner"></div>
-              <span>Waiting for sign-in&hellip; Close the sign-in tab once done.</span>
-            </div>
-          </div>
-        </div>
-
-        <!-- STEP 2: redirects automatically after sign-in detected -->
-        <div class="ov-seq-step ov-seq-locked" id="ov-seq-2">
-          <div class="ov-seq-badge" id="ov-badge-2">2</div>
-          <div class="ov-seq-body">
-            <div class="ov-seq-label">Submission form</div>
-            <div class="ov-seq-hint" id="ov-seq-2-hint">Opens automatically after you sign in</div>
-          </div>
-        </div>
-
-        <button type="button" id="overlay-dismiss" class="ov-btn-skip" style="margin-top:14px;">
-          I'll submit later &mdash; Dismiss
-        </button>
+      <!-- CRITICAL DISCLAIMER - Top Alert -->
+      <div style="background: #d84315; border-radius: 10px; padding: 18px; margin-bottom: 20px; color: #fff; text-align: center; border: 3px solid #ff9800;">
+        <p style="margin: 0 0 12px 0; font-size: 1.1rem; font-weight: 700;"><strong>⚠️ CRITICAL NOTICE ⚠️</strong></p>
+        <p style="margin: 0 0 10px 0; font-size: 0.95rem; line-height: 1.7;"><strong>KINDLY NOTE THIS IS NOT THE END OF THE PROCESS!</strong></p>
+        <p style="margin: 0 0 10px 0; font-size: 0.95rem; line-height: 1.7;">NOW KINDLY ASK YOUR COURSE REP OR CHECK YOUR CLASS GROUP FOR THE MICROSOFT FORMS SUBMISSION LINK AND SUBMIT YOUR WORK</p>
+        <p style="margin: 0; font-size: 1rem; font-weight: 900; letter-spacing: 0.5px;"><strong>THIS SYSTEM DOES NOT SUBMIT ANY WORK FOR YOU!!!!</strong></p>
       </div>
+
+      <!-- Full disclaimer notice in overlay -->
+      <div style="background: rgba(255,255,255,0.95); border-radius: 10px; padding: 24px; color: #1a1a1a; text-align: left;">
+        <p style="margin: 0 0 14px 0; font-size: 1.05rem; font-weight: 700; color: #d84315;"><strong>⚠️ IMPORTANT NOTICE</strong></p>
+        
+        <p style="margin: 0 0 12px 0; line-height: 1.6;">This web application is designed <strong>solely to assist you in formatting your LinkedIn assignment</strong> according to the lecturer's recommended template.</p>
+        
+        <p style="margin: 0 0 12px 0; line-height: 1.6;">It is important to clearly understand that <strong>this app does NOT submit your assignment on your behalf</strong>.</p>
+        
+        <p style="margin: 0 0 8px 0; font-weight: 600;"><strong>You are still fully responsible for:</strong></p>
+        <ul style="margin: 8px 0 12px 24px; padding: 0; line-height: 1.6;">
+          <li>Submitting your completed work yourself</li>
+          <li>Finding and using the official Microsoft Forms link provided by your lecturer</li>
+        </ul>
+
+        <div style="border-top: 1px solid rgba(255,152,0,0.4); margin-top: 12px; padding-top: 12px;">
+          <p style="margin: 0 0 8px 0; font-weight: 600;"><strong>Why this web app was created:</strong></p>
+          <p style="margin: 0 0 8px 0; line-height: 1.6;">Many students have been experiencing difficulties with:</p>
+          <ul style="margin: 8px 0 12px 24px; padding: 0; line-height: 1.6;">
+            <li>Properly placing their content into the required template</li>
+            <li>Correctly structuring their assignment details</li>
+            <li>Inserting screenshots neatly and in the right format</li>
+          </ul>
+          <p style="margin: 0; line-height: 1.6;">This web app was built <strong>to simplify the process of organizing and formatting your work</strong>—nothing more.</p>
+        </div>
+
+        <div style="border-top: 1px solid rgba(255,152,0,0.4); margin-top: 12px; padding-top: 12px;">
+          <p style="margin: 0 0 8px 0; font-weight: 600;"><strong>What Happens Next:</strong></p>
+          <p style="margin: 0 0 8px 0; line-height: 1.6; color: #d84315;"><strong>⚠️ KINDLY NOTE — THIS IS NOT THE END OF THE PROCESS!</strong></p>
+          <p style="margin: 0; line-height: 1.6;">You MUST:</p>
+          <ul style="margin: 8px 0 12px 24px; padding: 0; line-height: 1.6;">
+            <li>Ask your course representative for the Microsoft Forms submission link, <strong>OR</strong></li>
+            <li>Check your class group/chat for the official submission link</li>
+          </ul>
+          <p style="margin: 0; font-weight: 700; color: #d84315; line-height: 1.6;">🚫 <strong>THIS SYSTEM DOES NOT SUBMIT ANY WORK FOR YOU!!!!</strong></p>
+        </div>
+
+        <div style="border-top: 2px solid #d84315; margin-top: 12px; padding-top: 12px; text-align: center;">
+          <p style="margin: 0; font-size: 0.95rem; font-weight: 600; line-height: 1.6;"><strong>Use the app as a helper, not a substitute for your responsibility.</strong></p>
+        </div>
+      </div>
+
+      <button type="button" id="overlay-dismiss" class="ov-btn-skip" style="margin-top:16px;">
+        I Understand &mdash; Close
+      </button>
     </div>
 
   </div>
@@ -1649,60 +1660,7 @@
         }
       });
 
-      // --- 2-step submission: sign in → auto-open form when tab closes ---
-      var MS_LOGIN_URL = "https://account.microsoft.com/account";
-      var FORMS_URL    = "https://forms.cloud.microsoft/r/HSsJVV8WGs";
-
-      function startSignInFlow(signinBtn, waitingEl, seq1El, badge1El, seq2El, hint2El) {
-        // Open sign-in tab (no noopener so we can watch .closed)
-        var loginWin = window.open(MS_LOGIN_URL, "_blank");
-        if (!loginWin) {
-          // Popup blocked — fallback: open with noopener, show manual step 2 button
-          window.open(MS_LOGIN_URL, "_blank", "noopener,noreferrer");
-        }
-
-        // Show waiting spinner, hide sign-in button
-        signinBtn.style.display = "none";
-        waitingEl.style.display = "flex";
-
-        // Poll every 900ms until sign-in tab is closed
-        var poll = setInterval(function () {
-          if (!loginWin || loginWin.closed) {
-            clearInterval(poll);
-            // ✓ Mark step 1 done
-            seq1El.classList.add("ov-seq-done", "card-seq-done");
-            if (badge1El) badge1El.textContent = "\u2713";
-            waitingEl.style.display = "none";
-            signinBtn.style.display = "none";
-
-            // ✓ Unlock + update step 2
-            seq2El.classList.remove("ov-seq-locked", "card-seq-locked");
-            seq2El.classList.add("ov-seq-unlocked", "card-seq-unlocked");
-            if (hint2El) hint2El.textContent = "Signed in! Opening submission form\u2026";
-
-            // Auto-open forms after 800ms
-            setTimeout(function () {
-              window.open(FORMS_URL, "_blank", "noopener,noreferrer");
-              if (hint2El) hint2El.textContent = "\u2705 Form opened! Upload your PDF and submit.";
-            }, 800);
-          }
-        }, 900);
-      }
-
-      // ---- Overlay sign-in button ----
-      var ovSigninBtn = document.getElementById("ov-signin-btn");
-      if (ovSigninBtn) {
-        ovSigninBtn.addEventListener("click", function () {
-          startSignInFlow(
-            ovSigninBtn,
-            document.getElementById("ov-waiting"),
-            document.getElementById("ov-seq-1"),
-            document.getElementById("ov-badge-1"),
-            document.getElementById("ov-seq-2"),
-            document.getElementById("ov-seq-2-hint")
-          );
-        });
-      }
+      // --- 2-step submission removed: app now only handles PDF generation ---
 
       function showError(msg) {
         errorBanner.textContent = msg;
